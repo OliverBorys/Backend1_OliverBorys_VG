@@ -60,7 +60,7 @@ export class LoginHeaderComponent implements OnInit, OnDestroy {
   handleLogin(form: NgForm) {
     const { username, password } = form.value;
     this.http
-      .post<LoginResponse>('/api/admin/login', { username, password })
+      .post<LoginResponse>('/api/auth/login', { username, password })
       .subscribe({
         next: (res) => {
           this.headerService.setLoggedIn(res.user);
