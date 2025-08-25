@@ -1,17 +1,17 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './routes/home/home.component';
 import { ContactComponent } from './routes/contact/contact.component';
-import { AboutComponent } from './routes/about/about.component';
+import { AboutComponent } from './routes/about/about.component/about.component';
 import { ShopComponent } from './routes/shop/shop.component';
 import { ProductDetailsComponent } from './routes/product-details/product-details.component';
 import { SearchComponent } from './routes/search/search.component';
 import { CheckoutComponent } from './routes/checkout/checkout.component';
-import { AdminComponent } from './routes/admin/admin.component';
-import { DashboardComponent } from './routes/admin/dashboard/dashboard.component';
-import { OrdersComponent } from './routes/admin/orders/orders.component';
-import { ProductsComponent } from './routes/admin/products/products.component';
-import { HeroImagesComponent } from './routes/admin/hero-images/hero-images.component';
-import { AuthGuard } from './guards/auth.guard';
+import { AdminComponent } from './routes/admin/admin.component/admin.component';
+import { DashboardComponent } from './routes/admin/dashboard.component/dashboard.component';
+import { OrdersComponent } from './routes/admin/orders.component/orders.component';
+import { ProductsComponent } from './routes/admin/products.component/products.component';
+import { HeroImagesComponent } from './routes/admin/hero-images.component/hero-images.component';
+// import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -24,7 +24,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminComponent,
-    canActivate: [AuthGuard],
+    // canActivate: [AuthGuard],
     children: [
       { path: '', component: DashboardComponent },
       { path: 'products', component: ProductsComponent },
