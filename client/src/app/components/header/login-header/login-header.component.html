@@ -1,1 +1,42 @@
-<p>login-header.component works!</p>
+<section class="login-section">
+  <button (mousedown)="togglePopup($event)" class="login-button">
+    <img
+      [src]="isHeaderWhite ? '/images/login.svg' : '/images/login-white.svg'"
+      alt="Login"
+      class="icon"
+    />
+  </button>
+
+  <div *ngIf="isPopupOpen" class="popup-overlay">
+    <div class="popup">
+      <button class="close-btn" (click)="togglePopup()">&times;</button>
+
+      <ng-container *ngIf="!state?.isLoggedIn; else loggedIn">
+        <h2 class="login-title">Please enter your login details below</h2>
+        <form #loginForm="ngForm" (ngSubmit)="handleLogin(loginForm)">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" ngModel required autocomplete="username"
+          />
+          <label for="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            ngModel
+            required
+            autocomplete="current-password"
+          />
+          <button type="submit" class="sign-in-btn">Sign In</button>
+        </form>
+        <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+      </ng-container>
+
+      <ng-template #loggedIn>
+        <div class="logout">
+          <h2 class="login-title">Logged in as {{ state.user?.username }}</h2>
+          <button (click)="handleLogout()" class="logout-btn">Sign Out</button>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</section>

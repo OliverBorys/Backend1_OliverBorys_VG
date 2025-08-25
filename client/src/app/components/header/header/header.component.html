@@ -1,1 +1,36 @@
-<p>header.component works!</p>
+<header
+  class="header"
+  [ngClass]="{ 'white': isHeaderWhite, 'transparent': !isHeaderWhite }"
+  (mouseenter)="headerService.setHovered(true)"
+  (mouseleave)="headerService.setHovered(false)"
+>
+  <section class="header-content">
+    <app-sidebar-header [isHeaderWhite]="isHeaderWhite"></app-sidebar-header>
+
+    <div class="logo-center">
+      <a [routerLink]="['/']">
+        <img
+          [src]="isHeaderWhite ? '/images/logo.svg' : '/images/logo-white.svg'"
+          alt="Logo"
+          class="logo"
+        />
+      </a>
+    </div>
+
+    <div class="header-right">
+      <form class="search" (submit)="handleSearchSubmit($event)">
+        <input
+          type="text"
+          name="q"
+          placeholder="Search..."
+          class="search-input"
+        />
+      </form>
+
+      <div *ngIf="state.isLoggedIn" class="welcome-msg">Welcome {{ state.user?.username }}</div>
+
+      <app-login-header [isHeaderWhite]="isHeaderWhite"></app-login-header>
+      <app-cart-header [isHeaderWhite]="isHeaderWhite"></app-cart-header>
+    </div>
+  </section>
+</header>

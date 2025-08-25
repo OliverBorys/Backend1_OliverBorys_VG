@@ -1,0 +1,116 @@
+.login-button {
+  background-color: transparent;
+  border: none;
+  transition: transform 0.3s ease-in-out;
+}
+
+.login-button:hover {
+  transform: scale(1.2);
+}
+
+.icon {
+  height: 2rem;
+}
+
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 50;
+}
+
+.popup {
+  background: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  width: 90%;
+  max-width: 400px;
+  position: relative;
+}
+
+.login-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #2d2d2d;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+label {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #2d2d2d;
+}
+
+input {
+  margin-top: -0.3rem;
+  padding: 0.5rem;
+  border: 1px solid black;
+}
+
+input:focus {
+  border-color: #3b82f6;
+  outline: none;
+}
+
+.sign-in-btn {
+  padding: 0.75rem 2rem;
+  margin-top: 1rem;
+  border: 1px solid black;
+  font-size: 1.05rem;
+  color: black;
+  background-color: white;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.sign-in-btn:hover {
+  background-color: black;
+  color: white;
+}
+
+.close-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: none;
+  font-size: 1.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+.logout {
+  display: flex;
+  flex-direction: column;
+}
+
+.logout-btn {
+  padding: 0.75rem 2rem;
+  margin-top: 1rem;
+  border: 1px solid red;
+  font-size: 1.05rem;
+  color: red;
+  background-color: white;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: red;
+  color: white;
+}
+
+.error {
+  color: red;
+  margin-top: 0.5rem;
+}

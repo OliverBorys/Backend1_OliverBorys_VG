@@ -1,1 +1,64 @@
-<p>cart-header.component works!</p>
+<section>
+  <button (mousedown)="onCartButtonClick($event)" class="cart-button">
+    <img
+      [src]="isHeaderWhite ? '/images/cart.svg' : '/images/cart-white.svg'"
+      alt="Cart"
+      class="icon"
+    />
+  </button>
+
+  <div
+    class="cart-drawer"
+    [class.cart-open]="state.isCartOpen"
+    [class.cart-closed]="!state.isCartOpen"
+    [attr.aria-hidden]="!state.isCartOpen"
+  >
+    <h2 class="cart-title">Your Cart</h2>
+    <div class="cart-body">
+      <div *ngIf="cartItems.length === 0">Your cart is empty</div>
+
+      <div *ngFor="let item of cartItems; trackBy: trackById" class="cart-item">
+        <a [routerLink]="['/product', item.id]" class="item-info" (click)="closeCart()"
+        >
+          <img [src]="item.image" alt="{{ item.productName }}" />
+          <div class="product-info">
+            <h3 class="product-name">{{ item.productName }}</h3>
+            <p class="product-brand">{{ item.brand }}</p>
+            <p>${{ item.price }}</p>
+          </div>
+        </a>
+
+        <div class="quantity-controls">
+          <button
+            (click)="changeQuantity($event, item.id, item.quantity - 1)"
+            class="quantity-btn"
+          >
+            -
+          </button>
+          <span class="quantity-number">{{ item.quantity }}</span>
+          <button
+            (click)="changeQuantity($event, item.id, item.quantity + 1)"
+            class="quantity-btn"
+          >
+            +
+          </button>
+          <button (click)="handleRemove($event, item.id)" class="remove">
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-footer">
+      <div class="cart-total">Total: ${{ total }}</div>
+      <div class="checkout-btn">
+        <a
+          [routerLink]="['/checkout']"
+          class="checkout-link"
+          (click)="closeCart()"
+          >Checkout</a
+        >
+      </div>
+    </div>
+  </div>
+</section>

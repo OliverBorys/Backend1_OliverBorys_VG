@@ -1,1 +1,52 @@
-<p>sidebar-header.component works!</p>
+<section>
+  <button
+    (mousedown)="toggleSidebar($event)"
+    class="sidebar-button"
+    [class.open]="state.isSidebarOpen"
+  >
+  <span [class.dark]="isHeaderWhite"></span>
+  <span [class.dark]="isHeaderWhite"></span>
+  <span [class.dark]="isHeaderWhite"></span>
+  </button>
+
+  <nav class="nav-links">
+    <a [routerLink]="['/']" class="nav-link" [class.dark]="isHeaderWhite"
+      >Home <span class="header-underline"></span
+    ></a>
+    <a [routerLink]="['/shop']" class="nav-link" [class.dark]="isHeaderWhite"
+      >Shop <span class="header-underline"></span
+    ></a>
+    <a [routerLink]="['/about']" class="nav-link" [class.dark]="isHeaderWhite"
+      >About <span class="header-underline"></span
+    ></a>
+    <a [routerLink]="['/contact']" class="nav-link" [class.dark]="isHeaderWhite"
+      >Contact <span class="header-underline"></span
+    ></a>
+    <a *ngIf="state?.isLoggedIn" [routerLink]="['/admin']" class="nav-link" [class.dark]="isHeaderWhite"
+      >Admin <span class="header-underline"></span
+    ></a>
+  </nav>
+
+  <nav
+    class="sidebar-nav"
+    [class.sidebar-open]="state.isSidebarOpen"
+    [attr.aria-hidden]="!state.isSidebarOpen"
+  >
+  <form #sidebarForm="ngForm" (ngSubmit)="handleSearchSubmit(sidebarForm)" class="search">
+    <input
+      type="text"
+      name="q"
+      ngModel
+      placeholder="Search..."
+      class="search-input"
+    />
+  </form>
+    <a [routerLink]="['/']" (click)="closeSidebar()">Home</a>
+    <a [routerLink]="['/shop']" (click)="closeSidebar()">Shop</a>
+    <a [routerLink]="['/about']" (click)="closeSidebar()">About</a>
+    <a [routerLink]="['/contact']" (click)="closeSidebar()">Contact</a>
+    <a *ngIf="state?.isLoggedIn" [routerLink]="['/admin']" (click)="closeSidebar()"
+      >Admin</a
+    >
+  </nav>
+</section>
