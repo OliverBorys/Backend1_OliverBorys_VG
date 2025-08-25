@@ -1,0 +1,30 @@
+.header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: white;
+}
+
+.navigation-bar {
+  display: flex;
+  flex-direction: row;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: white;
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  background-color: grey;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.search-input {
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+}
+
+body {
+  background-color: #f9f9fb;
+}
