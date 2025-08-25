@@ -1,1 +1,37 @@
-<p>about.component works!</p>
+<section>
+  <div class="about-hero">
+    <img
+      [src]="isMobile ? mobileHeroImage : desktopHeroImage"
+      alt="Responsive"
+      class="hero-image"
+    />
+  </div>
+
+  <div class="about-intro">
+    <h2>About us</h2>
+    <p>
+      A Story of Craftsmanship and Consciousness where we craft timeless pieces
+      that merge precision with elegance. Each silhouette, fabric, and
+      detail honors generations of artisans. Our philosophy is simple:
+      luxury isn’t excess—it’s purpose, refinement, and lasting beauty,
+      created with sustainability at its core.
+    </p>
+  </div>
+
+  <div class="about-sections">
+    <app-about-section
+      *ngFor="let section of aboutSections"
+      [title]="section.title"
+      [text]="section.text"
+      [image]="section.image"
+      [reverse]="section.reverse"
+    ></app-about-section>
+  </div>
+
+  <div class="about-banner">
+    <img
+      src="https://a.storyblok.com/f/286233/1920x1050/e15f45e4d6/a-story-of-contrasts1.jpg"
+      alt="Brand Heritage"
+    />
+  </div>
+</section>

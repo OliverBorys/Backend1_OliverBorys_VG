@@ -1,11 +1,21 @@
 import { Component } from '@angular/core';
+import { ContactAccordionComponent } from '../../components/contact/contact-accordion.component';
+import { Title } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-contact.component',
-  imports: [],
+  standalone: true,
+  selector: 'app-contact',
   templateUrl: './contact.component.html',
-  styleUrl: './contact.component.css'
+  styleUrls: ['./contact.component.css'],
+  imports: [ContactAccordionComponent]
 })
-export class ContactComponent {
 
+export class ContactComponent {
+  constructor(
+    private titleService: Title
+  ) {}
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Contact');
+  }
 }

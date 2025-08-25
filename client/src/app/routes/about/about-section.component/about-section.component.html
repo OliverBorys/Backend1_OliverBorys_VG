@@ -1,1 +1,6 @@
-<p>about-section.component works!</p>
+<div class="about-row" [ngClass]="{ 'reverse': reverse }">
+  <img [src]="image" [alt]="title" class="about-image" />
+  <p class="about-text">
+    <strong>{{ title }}</strong> {{ text }}
+  </p>
+</div>
