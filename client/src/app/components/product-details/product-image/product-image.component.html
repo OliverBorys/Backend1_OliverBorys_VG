@@ -1,1 +1,49 @@
-<p>product-image.component works!</p>
+<section>
+  <div class="mobile-carousel" [ngClass]="{ hidden: images.length === 0 }">
+    <div class="carousel-container">
+      <div
+        class="carousel-track"
+        [style.transform]="'translateX(-' + currentIndex * 100 + '%)'"
+      >
+        <div *ngFor="let img of images; let i = index" class="carousel-slide">
+          <img [src]="img" alt="Product {{ i + 1 }}" class="carousel-image" />
+        </div>
+      </div>
+    </div>
+    <button
+      *ngIf="images.length > 1"
+      class="carousel-button prev"
+      (click)="prevImage()"
+      aria-label="Previous image"
+    >
+      ‹
+    </button>
+    <button
+      *ngIf="images.length > 1"
+      class="carousel-button next"
+      (click)="nextImage()"
+      aria-label="Next image"
+    >
+      ›
+    </button>
+    <div class="pagination" *ngIf="images.length > 1">
+      <span
+        *ngFor="let img of images; let i = index"
+        class="pagination-dot"
+        [ngClass]="{ active: i === currentIndex }"
+        (click)="goToImage(i)"
+        [attr.aria-label]="'Go to image ' + (i + 1)"
+      ></span>
+    </div>
+  </div>
+
+  <div class="desktop-grid" [ngClass]="{ hidden: images.length === 0 }">
+    <div *ngFor="let img of images; let i = index" class="grid-item">
+      <img [src]="img" alt="Product {{ i + 1 }}" class="grid-image" />
+    </div>
+  </div>
+
+  <p *ngIf="!product || images.length === 0" class="no-product">
+    Product not found
+  </p>
+</section>

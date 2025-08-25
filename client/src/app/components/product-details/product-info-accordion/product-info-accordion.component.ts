@@ -1,11 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-product-info-accordion.component',
-  imports: [],
+  standalone: true,
+  selector: 'app-product-info-accordion',
+  imports: [CommonModule],
   templateUrl: './product-info-accordion.component.html',
-  styleUrl: './product-info-accordion.component.css'
+  styleUrls: ['./product-info-accordion.component.css']
 })
 export class ProductInfoAccordionComponent {
+  @Input() title: string = '';
+  isOpen: boolean = false;
 
+  toggle(): void {
+    this.isOpen = !this.isOpen;
+  }
 }

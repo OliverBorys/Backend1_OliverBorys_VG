@@ -1,0 +1,13 @@
+.missing-wrapper {
+  text-align: center;
+  margin-top: 5rem;
+}
+.missing-wrapper button {
+  background: #1e40af;
+  color: white;
+  padding: 0.5rem 1rem;
+  margin-top: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

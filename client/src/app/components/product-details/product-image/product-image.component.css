@@ -1,0 +1,120 @@
+section {
+  width: 100%;
+  max-width: 42rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mobile-carousel {
+  width: 100%;
+  max-width: 40rem;
+  position: relative;
+}
+
+.carousel-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.3s ease-in-out;
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.carousel-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: transparent;
+  color: black;
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 40px;
+  line-height: 1;
+  z-index: 10;
+}
+
+.prev {
+  left: 8px;
+}
+
+.next {
+  right: 8px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.pagination-dot {
+  width: 8px;
+  height: 8px;
+  margin: 0 4px;
+  background-color: #d1d5db;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.pagination-dot.active {
+  background-color: #1f2937;
+}
+
+.desktop-grid {
+  display: none;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: 40rem;
+}
+
+.grid-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+}
+
+.grid-image {
+  width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.no-product {
+  text-align: center;
+  color: #6b7280;
+}
+
+@media (min-width: 1024px) {
+  .mobile-carousel {
+    display: none;
+  }
+
+  .desktop-grid {
+    display: grid;
+  }
+}
+
+.hidden {
+  display: none;
+}

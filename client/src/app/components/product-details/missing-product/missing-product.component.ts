@@ -1,11 +1,18 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-missing-product.component',
-  imports: [],
+  standalone: true,
+  selector: 'app-missing-product',
   templateUrl: './missing-product.component.html',
-  styleUrl: './missing-product.component.css'
+  styleUrls: ['./missing-product.component.css'],
+  imports: [CommonModule]
 })
 export class MissingProductComponent {
+  constructor(private router: Router) {}
 
+  goHome(): void {
+    this.router.navigate(['/']);
+  }
 }

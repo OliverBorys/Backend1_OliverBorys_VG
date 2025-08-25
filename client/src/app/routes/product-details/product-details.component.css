@@ -1,0 +1,30 @@
+.product-details-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 7rem 0 0 0;
+}
+
+.product-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  width: 100%;
+  max-width: 88rem;
+  margin: 0 1rem;
+  align-items: start;
+  justify-content: center;
+}
+
+.loading {
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .product-layout {
+    grid-template-columns: repeat(2, minmax(0, 41rem));
+    gap: 2rem;
+    margin: 0 2rem;
+    justify-content: center;
+  }
+}

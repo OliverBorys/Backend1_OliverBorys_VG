@@ -1,0 +1,37 @@
+.accordion-section {
+  width: 100%;
+  border-bottom: 1px solid black;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 1.25rem;
+  font-weight: 600;
+  background: none;
+  border: none;
+  color: #111;
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+
+.accordion-title {
+  font-size: 1.25rem;
+}
+
+.accordion-icon {
+  font-size: 2rem;
+}
+
+.accordion-content {
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid #ccc;
+  color: #333;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
