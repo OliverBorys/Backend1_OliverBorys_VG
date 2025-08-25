@@ -1,1 +1,19 @@
-<p>category-grid.component works!</p>
+<section class="category-grid">
+  <div class="category-grid-wrapper">
+    <a
+      *ngFor="let category of categories"
+      class="category-item"
+      [routerLink]="['/shop']"
+      [queryParams]="{ category: category.name.toLowerCase() }"
+    >
+      <img
+        [src]="category.img"
+        [alt]="category.name"
+        class="category-image"
+      />
+      <div class="category-overlay">
+        {{ category.name }}
+      </div>
+    </a>
+  </div>
+</section>

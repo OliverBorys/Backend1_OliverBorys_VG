@@ -1,1 +1,15 @@
-<p>home.component works!</p>
+<app-hero-section></app-hero-section>
+
+<section class="trending">
+  <h2>What’s Trending Now</h2>
+  <app-product-grid
+    [products]="trendingProducts"
+    [query]="''"
+    (likeToggled)="onLikeToggled()"
+  ></app-product-grid>
+</section>
+
+<section class="home-sections">
+  <app-category-grid></app-category-grid>
+  <app-about-find-us></app-about-find-us>
+</section>

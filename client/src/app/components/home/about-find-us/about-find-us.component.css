@@ -1,0 +1,53 @@
+.about-find-us-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .about-find-us-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.about-find-us-item {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.about-find-us-item:hover .about-find-us-image {
+  transform: scale(1.05);
+}
+
+.about-find-us-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+  border-radius: 1rem;
+  display: block;
+}
+
+.about-find-us-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.about-find-us-item:hover .about-find-us-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+}

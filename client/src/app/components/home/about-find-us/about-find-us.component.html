@@ -1,1 +1,31 @@
-<p>about-find-us.component works!</p>
+<section class="about-find-us">
+  <div class="about-find-us-grid">
+    <ng-container *ngFor="let section of sections">
+      <a
+        *ngIf="!section.external"
+        [routerLink]="section.link"
+        class="about-find-us-item"
+      >
+        <img
+          [src]="section.img"
+          [alt]="section.name"
+          class="about-find-us-image"
+        />
+        <div class="about-find-us-overlay">{{ section.name }}</div>
+      </a>
+
+      <div
+        *ngIf="section.external"
+        class="about-find-us-item"
+        (click)="openExternal(section.link)"
+      >
+        <img
+          [src]="section.img"
+          [alt]="section.name"
+          class="about-find-us-image"
+        />
+        <div class="about-find-us-overlay">{{ section.name }}</div>
+      </div>
+    </ng-container>
+  </div>
+</section>
