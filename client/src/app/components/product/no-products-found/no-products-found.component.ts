@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-no-products-found.component',
-  imports: [],
+  standalone: true,
+  selector: 'app-no-products-found',
   templateUrl: './no-products-found.component.html',
-  styleUrl: './no-products-found.component.css'
+  styleUrls: ['./no-products-found.component.css'],
+  imports: [CommonModule]
 })
 export class NoProductsFoundComponent {
-
+  @Input() query: string = '';
 }

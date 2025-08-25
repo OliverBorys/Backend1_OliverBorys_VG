@@ -1,11 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-sort-dropdown.component',
-  imports: [],
+  standalone: true,
+  selector: 'app-sort-dropdown',
   templateUrl: './sort-dropdown.component.html',
-  styleUrl: './sort-dropdown.component.css'
+  styleUrls: ['./sort-dropdown.component.css'],
+  imports: [CommonModule, FormsModule]
 })
 export class SortDropdownComponent {
+  @Input() sort: string = 'newest';
+  @Output() sortChange = new EventEmitter<string>();
 
+  onSortChange(value: string): void {
+    this.sortChange.emit(value);
+  }
 }

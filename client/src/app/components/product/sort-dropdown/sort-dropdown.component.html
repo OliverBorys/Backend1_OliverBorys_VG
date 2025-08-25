@@ -1,1 +1,9 @@
-<p>sort-dropdown.component works!</p>
+<section class="sort-dropdown">
+  <label for="sortDropdown" class="sort-label">Sort By:</label>
+  <select id="sortDropdown" [(ngModel)]="sort" (change)="onSortChange(sort)" class="sort-select">
+    <option value="newest">Newest</option>
+    <option value="oldest">Oldest</option>
+    <option value="highest">Highest Price</option>
+    <option value="lowest">Lowest Price</option>
+  </select>
+</section>

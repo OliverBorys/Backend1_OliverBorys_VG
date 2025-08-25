@@ -1,1 +1,21 @@
-<p>category-filter.component works!</p>
+<section class="category-filter">
+  <div class="category-select-wrapper">
+    <select [(ngModel)]="selectedCategory" (change)="onCategoryChange(selectedCategory)" class="category-dropdown">
+      <option value="">All Items</option>
+      <option value="favorites">Favorites</option>
+      <option *ngFor="let category of categories" [value]="category.categoryName.toLowerCase()">
+        {{ category.categoryName }}
+      </option>
+    </select>
+  </div>
+
+  <nav class="category-nav">
+    <button (click)="onCategoryChange('')" [class.active]="selectedCategory === ''">All</button>
+    <button (click)="onCategoryChange('favorites')" [class.active]="selectedCategory === 'favorites'">Favorites</button>
+    <button *ngFor="let category of categories"
+            (click)="onCategoryChange(category.categoryName.toLowerCase())"
+            [class.active]="selectedCategory === category.categoryName.toLowerCase()">
+      {{ category.categoryName }}
+    </button>
+  </nav>
+</section>

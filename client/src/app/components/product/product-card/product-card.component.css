@@ -1,0 +1,96 @@
+.product-card {
+  width: 250px;
+  padding: 1rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  transition: box-shadow 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.like-button {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  background-color: white;
+  padding: 0.25rem;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.like-button-img {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 12rem;
+  overflow: hidden;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+}
+
+.product-img {
+  width: 100%;
+  height: 12rem;
+  object-fit: contain;
+  transition: opacity 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-top-left-radius: var(--radius-lg);
+  border-top-right-radius: var(--radius-lg);
+}
+
+.primary {
+  opacity: 1;
+}
+
+.secondary {
+  opacity: 0;
+}
+
+.image-container:hover .primary {
+  opacity: 0;
+}
+
+.image-container:hover .secondary {
+  opacity: 1;
+}
+
+.product-info {
+  padding-top: 1rem;
+  text-align: center;
+  font-size: 1.125rem;
+}
+
+.brand {
+  font-size: 0.9rem;
+  color: #555;
+  margin-top: -0.5rem;
+}
+
+.price {
+  font-size: 1.125rem;
+  font-weight: bold;
+  color: #111;
+  margin-top: -0.5rem;
+}

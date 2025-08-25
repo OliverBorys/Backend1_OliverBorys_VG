@@ -1,1 +1,13 @@
-<p>product-grid.component works!</p>
+<section [ngClass]="['product-grid', gridClass, products.length < 4 ? 'left-align' : '']">
+  <ng-container *ngIf="visibleProducts.length > 0; else noResults">
+    <app-product-card
+      *ngFor="let product of visibleProducts"
+      [product]="product"
+      (likeToggled)="onLikeToggle()"
+    ></app-product-card>
+  </ng-container>
+
+  <ng-template #noResults>
+    <app-no-products-found [query]="query"></app-no-products-found>
+  </ng-template>
+</section>

@@ -1,11 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Category } from '../../../models/category.model';
 
 @Component({
-  selector: 'app-category-filter.component',
-  imports: [],
+  standalone: true,
+  selector: 'app-category-filter',
   templateUrl: './category-filter.component.html',
-  styleUrl: './category-filter.component.css'
+  styleUrls: ['./category-filter.component.css'],
+  imports: [CommonModule, FormsModule]
 })
 export class CategoryFilterComponent {
+  @Input() categories: Category[] = [];
+  @Input() selectedCategory: string = '';
+  @Output() categoryChange = new EventEmitter<string>();
 
+  onCategoryChange(value: string): void {
+    this.categoryChange.emit(value);
+  }
 }
