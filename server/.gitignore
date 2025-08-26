@@ -1,1 +1,6 @@
 /node_modules
+
+# SQLite databaser
+*.db-wal
+*.db-shm
+sessions.db
