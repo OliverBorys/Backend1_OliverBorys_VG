@@ -1,6 +1,8 @@
 /node_modules
 
-# SQLite databaser
-*.db-wal
-*.db-shm
-sessions.db
+# SQLite WAL/SHM (transaktionsfiler)
+**/*.db-wal
+**/*.db-shm
+
+# Session-databas
+server/db/sessions.db
