@@ -1,6 +1,6 @@
 <header
   class="header"
-  [ngClass]="{ 'white': isHeaderWhite, 'transparent': !isHeaderWhite }"
+  [ngClass]="{ white: isHeaderWhite, transparent: !isHeaderWhite }"
   (mouseenter)="headerService.setHovered(true)"
   (mouseleave)="headerService.setHovered(false)"
 >
@@ -19,17 +19,22 @@
 
     <div class="header-right">
       <form class="search" (submit)="handleSearchSubmit($event)">
-        <input
-          type="text"
-          name="q"
-          placeholder="Search..."
-          class="search-input"
-        />
+        <input type="text" name="q" placeholder="Search..." class="search-input" />
       </form>
 
       <div *ngIf="state.isLoggedIn" class="welcome-msg">Welcome {{ state.user?.username }}</div>
-
       <app-login-header [isHeaderWhite]="isHeaderWhite"></app-login-header>
+
+      <a
+        class="icon-btn favorites-btn"
+        [routerLink]="['/shop']"
+        [queryParams]="{ category: 'favorites' }"
+        aria-label="Favorites"
+      >
+        <img src="/images/like-icon.svg" alt="Favorites" class="icon" />
+        <span class="badge" *ngIf="likedCount > 0">{{ likedCount }}</span>
+      </a>
+
       <app-cart-header [isHeaderWhite]="isHeaderWhite"></app-cart-header>
     </div>
   </section>

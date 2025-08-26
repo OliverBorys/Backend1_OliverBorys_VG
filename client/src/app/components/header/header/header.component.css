@@ -68,3 +68,39 @@
     margin-left: 1rem;
   }
 }
+
+.icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  transition: transform 0.3s ease-in-out;
+  margin-right: 0.5rem;
+}
+
+.icon-btn .icon {
+  height: 2rem;
+  display: block;
+}
+
+.icon-btn:hover {
+  transform: scale(1.2);
+}
+
+.favorites-btn .badge {
+  position: absolute;
+  top: 20px;
+  right: -8px;
+  min-width: 10px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: black; /* röd */
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}

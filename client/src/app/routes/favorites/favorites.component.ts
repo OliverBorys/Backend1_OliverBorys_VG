@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { CategoryFilterComponent } from '../../components/product/category-filter/category-filter.component';
 import { SortDropdownComponent } from '../../components/product/sort-dropdown/sort-dropdown.component';
 import { ProductGridComponent } from '../../components/product/product-grid/product-grid.component';
 import { filterProducts, sortProducts } from '../../utils/filter-utils';
@@ -15,17 +14,16 @@ import { FavoritesService } from '../../services/favorites.services';
 @Component({
   standalone: true,
   selector: 'app-shop',
-  templateUrl: './shop.component.html',
-  styleUrls: ['./shop.component.css'],
+  templateUrl: './favorites.component.html',
+  styleUrls: ['./favorites.component.css'],
   imports: [
     CommonModule,
     HttpClientModule,
-    CategoryFilterComponent,
     SortDropdownComponent,
     ProductGridComponent,
   ],
 })
-export class ShopComponent {
+export class FavoritesComponent {
   products: GridProduct[] = [];
   categories: Category[] = [];
   selectedCategory: string = '';
@@ -88,25 +86,10 @@ export class ShopComponent {
     this.updateTitle();
   }
 
-pageTitle = 'Shop';
-
-updateTitle(): void {
-  if (this.selectedCategory === 'favorites') {
-    this.pageTitle = 'Favorites';
-    this.titleService.setTitle('Favorites');
-    return;
+  updateTitle(): void {
+    const title = this.selectedCategory
+      ? `Shop: ${this.selectedCategory.charAt(0).toUpperCase() + this.selectedCategory.slice(1)}`
+      : 'Shop: All';
+    this.titleService.setTitle(title);
   }
-
-  if (this.selectedCategory === 'new') {
-    this.pageTitle = 'New in';
-    this.titleService.setTitle('New in');
-    return;
-  }
-
-  this.pageTitle = this.selectedCategory
-    ? `${this.selectedCategory.charAt(0).toUpperCase() + this.selectedCategory.slice(1)}`
-    : 'Shop';
-
-  this.titleService.setTitle(this.pageTitle);
-}
 }
