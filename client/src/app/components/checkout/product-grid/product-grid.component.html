@@ -1,1 +1,36 @@
-<p>product-grid.component works!</p>
+<section class="product-grid">
+  <h2 class="cart-title">Your Cart</h2>
+  <div *ngIf="cartItems.length === 0" class="empty-message">
+    Your cart is empty
+  </div>
+
+  <div class="product-item" *ngFor="let item of cartItems; trackBy: trackById">
+    <div class="product-link" (click)="goToProduct(item.id)">
+      <img [src]="item.image" [alt]="item.productName" class="product-image" />
+      <div class="product-details">
+        <h3>{{ item.productName }}</h3>
+        <p class="brand">{{ item.brand }}</p>
+        <p class="price">${{ item.price }}</p>
+      </div>
+    </div>
+
+    <div class="quantity-controls">
+      <button
+        (click)="changeQuantity(item.id, item.quantity - 1)"
+        class="quantity-btn"
+      >
+        -
+      </button>
+      <span class="quantity-number">{{ item.quantity }}</span>
+      <button
+        (click)="changeQuantity(item.id, item.quantity + 1)"
+        class="quantity-btn"
+      >
+        +
+      </button>
+      <button class="remove" (click)="removeItem(item.id)">Remove</button>
+    </div>
+  </div>
+
+  <div class="total-box">Total: ${{ total }}</div>
+</section>
