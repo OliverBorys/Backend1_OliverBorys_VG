@@ -12,23 +12,89 @@
       <button class="close-btn" (click)="togglePopup()">&times;</button>
 
       <ng-container *ngIf="!state?.isLoggedIn; else loggedIn">
-        <h2 class="login-title">Please enter your login details below</h2>
-        <form #loginForm="ngForm" (ngSubmit)="handleLogin(loginForm)">
-          <label for="username">Username:</label>
-          <input type="text" id="username" name="username" ngModel required autocomplete="username"
-          />
-          <label for="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            ngModel
-            required
-            autocomplete="current-password"
-          />
-          <button type="submit" class="sign-in-btn">Sign In</button>
-        </form>
-        <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+        <div class="card" [class.flipped]="isRegisterMode">
+          <div class="face front">
+            <h2 class="login-title">Please enter your login details below</h2>
+
+            <form #loginForm="ngForm" (ngSubmit)="handleLogin(loginForm)">
+              <label for="username">Username:</label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                ngModel
+                required
+                autocomplete="username"
+              />
+
+              <label for="password">Password:</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                ngModel
+                required
+                autocomplete="current-password"
+              />
+
+              <button type="submit" class="sign-in-btn">Sign In</button>
+            </form>
+
+            <p class="muted">
+              Not a member?
+              <button class="link-btn" (click)="switchToRegister()">Create account</button>
+            </p>
+
+            <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+          </div>
+
+          <div class="face back">
+            <h2 class="login-title">Create your account</h2>
+
+            <form #registerForm="ngForm" (ngSubmit)="handleRegister(registerForm)">
+              <label for="r-username">Username:</label>
+              <input
+                type="text"
+                id="r-username"
+                name="username"
+                ngModel
+                required
+                autocomplete="username"
+              />
+
+              <label for="r-password">Password:</label>
+              <input
+                type="password"
+                id="r-password"
+                name="password"
+                ngModel
+                required
+                minlength="6"
+                autocomplete="new-password"
+              />
+
+              <label for="r-confirm">Confirm password:</label>
+              <input
+                type="password"
+                id="r-confirm"
+                name="confirmPassword"
+                ngModel
+                required
+                minlength="6"
+                autocomplete="new-password"
+              />
+
+              <button type="submit" class="sign-in-btn">Create account</button>
+            </form>
+
+            <p class="muted">
+              Already have an account?
+              <button class="link-btn" (click)="switchToLogin()">Sign in</button>
+            </p>
+
+            <p class="error" *ngIf="errorMsg">{{ errorMsg }}</p>
+          </div>
+        </div>
       </ng-container>
 
       <ng-template #loggedIn>
