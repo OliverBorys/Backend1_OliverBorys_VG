@@ -1,0 +1,56 @@
+<h2 class="hero-images-title">Hero Images Management</h2>
+<section class="admin-hero-images-table">
+  <table class="hero-images-table">
+    <thead>
+      <tr>
+        <th class="small">ID</th>
+        <th>Image Preview</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let image of heroImages">
+        <td class="small">{{ image.id }}</td>
+        <td class="image-cell">
+          <img
+            [src]="image.image_url"
+            alt="Hero Image {{ image.id }}"
+            class="hero-image-preview"
+            (error)="handleImageError($event)"
+          />
+          <p>{{ image.image_url }}</p>
+        </td>
+        <td class="actions">
+          <button class="edit-btn" (click)="openEditModal(image)">Edit</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="modal-backdrop" (click)="closeModal()" *ngIf="showModal">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <h2 class="modal-title">
+        Edit Hero Image {{ selectedHeroImage?.id }}
+      </h2>
+      <div class="form-section">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+          <div class="form-group">
+            <input formControlName="image_url" placeholder="Image URL" />
+            <div *ngIf="form.get('image_url')?.touched && form.get('image_url')?.invalid" class="error-message">
+              <div *ngIf="form.get('image_url')?.errors?.['required']">Image URL is required.</div>
+              <div *ngIf="form.get('image_url')?.errors?.['pattern']">Image URL must start with http:// or https://.</div>
+            </div>
+            <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" (click)="closeModal()">Cancel</button>
+            <button type="submit" [disabled]="!form.valid">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,8 @@
-<p>admin.component works!</p>
+<nav class="admin-routes">
+  <a [routerLink]="['/admin']">Admin <span class="admin-routes-underline" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"></span></a>
+  <a [routerLink]="['/admin/products']">Products <span class="admin-routes-underline" routerLinkActive="active-link"></span></a>
+  <a [routerLink]="['/admin/hero-images']">Hero images <span class="admin-routes-underline" routerLinkActive="active-link"></span></a>
+  <a [routerLink]="['/admin/orders']">Orders <span class="admin-routes-underline" routerLinkActive="active-link"></span></a>
+</nav>
+
+<router-outlet></router-outlet>

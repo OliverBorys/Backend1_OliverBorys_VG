@@ -1,0 +1,90 @@
+<div class="modal-backdrop" (click)="close.emit()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <h2 class="modal-title">
+        {{ product ? "Edit Product" : "Add New Product" }}
+      </h2>
+      <div class="form-section">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+          <div class="form-group">
+            <input formControlName="productName" placeholder="Product Name" />
+            <div *ngIf="form.get('productName')?.touched && form.get('productName')?.invalid" class="error-message">
+              Product Name is required.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <input formControlName="brand" placeholder="Brand" />
+            <div *ngIf="form.get('brand')?.touched && form.get('brand')?.invalid" class="error-message">
+              Brand is required.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <select formControlName="categoryId">
+              <option value="" disabled>Select Category</option>
+              <option *ngFor="let cat of categories" [value]="cat.id">
+                {{ cat.categoryName }}
+              </option>
+            </select>
+            <div *ngIf="form.get('categoryId')?.touched && form.get('categoryId')?.invalid" class="error-message">
+              Category is required.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <input formControlName="price" type="number" placeholder="Price" />
+            <div *ngIf="form.get('price')?.touched && form.get('price')?.invalid" class="error-message">
+              <div *ngIf="form.get('price')?.errors?.['required']">Price is required.</div>
+              <div *ngIf="form.get('price')?.errors?.['min']">Price must be at least 0.</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <input formControlName="image" placeholder="Image URL" />
+            <div *ngIf="form.get('image')?.touched && form.get('image')?.invalid" class="error-message">
+              Image URL is required.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <input formControlName="secondaryImage1" placeholder="Secondary Image 1 (Optional)" />
+          </div>
+          <div class="form-group">
+            <input formControlName="secondaryImage2" placeholder="Secondary Image 2 (Optional)" />
+          </div>
+          <div class="form-group">
+            <input formControlName="secondaryImage3" placeholder="Secondary Image 3 (Optional)" />
+          </div>
+
+          <div class="form-group">
+            <textarea formControlName="productDescription" placeholder="Description"></textarea>
+            <div *ngIf="form.get('productDescription')?.touched && form.get('productDescription')?.invalid" class="error-message">
+              Description is required.
+            </div>
+          </div>
+
+          <div class="is-new-date">
+            <div class="new">
+              <input type="checkbox" formControlName="isNew" id="isNew" />
+              <label for="isNew">New In</label>
+            </div>
+            <div class="form-group date">
+              <input type="date" formControlName="publishingDate" class="date" />
+              <div *ngIf="form.get('publishingDate')?.touched && form.get('publishingDate')?.invalid" class="error-message">
+                Publishing Date is required.
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" (click)="close.emit()">Cancel</button>
+            <button type="submit" [disabled]="!form.valid">
+              {{ product ? "Update" : "Add Product" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

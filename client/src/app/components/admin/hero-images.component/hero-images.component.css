@@ -1,0 +1,267 @@
+.hero-images-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #2d2d2d;
+  margin: 2rem 0 3rem 0;
+}
+
+.admin-hero-images-table {
+  margin: 1rem;
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.hero-images-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hero-images-table th {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d2d2d;
+}
+
+.hero-images-table td {
+  font-size: 0.95rem;
+  color: #2d2d2d;
+}
+
+.hero-images-table td.actions {
+  text-align: center;
+  vertical-align: middle;
+  min-height: 100px;
+}
+
+.small {
+  width: 20px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.image-cell {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 100px;
+}
+
+.hero-image-preview {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 6px;
+  border: none;
+  background-color: #f9f9fb;
+}
+@media (min-width: 425px) {
+  .hero-image-preview {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+.image-cell p {
+  flex: 1;
+  word-break: break-all;
+  margin: 0;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .image-cell p {
+    display: block;
+  }
+}
+
+.edit-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #3b82f6;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+.edit-btn:hover {
+  background-color: #2563eb;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 1rem;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 1rem;
+  max-width: 600px;
+  width: 100%;
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content {
+  overflow-y: auto;
+  flex: 1;
+  padding: 0 2rem 1rem;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+  padding: 1rem 0;
+  margin: 0;
+  margin-top: -1rem;
+  color: #2d2d2d;
+}
+
+.form-section {
+  margin: 1rem 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: #fff;
+}
+
+input::placeholder {
+  color: #9ca3af;
+}
+
+input:hover {
+  background-color: #f3f4f6;
+}
+
+input.ng-invalid.ng-touched {
+  border-color: #dc2626;
+}
+
+.modal-actions {
+  display: flex;
+  width: 90%;
+  margin: 1rem auto 0;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.modal-actions button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+.modal-actions button:first-child {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.modal-actions button:first-child:hover {
+  background-color: #e0e0e0;
+}
+
+.modal-actions button:last-child {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
+.modal-actions button:last-child:hover {
+  background-color: #2563eb;
+}
+
+.modal-actions button:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (min-width: 1350px) {
+  .modal-backdrop {
+    padding: 1rem 4rem;
+  }
+
+  .modal-box {
+    max-height: calc(100vh - 8rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .modal-box {
+    max-width: 90%;
+  }
+
+  input {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .modal-actions button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}

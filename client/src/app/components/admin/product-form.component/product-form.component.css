@@ -1,0 +1,218 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 1rem;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 1rem;
+  max-width: 600px;
+  width: 100%;
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-content {
+  overflow-y: auto;
+  flex: 1;
+  padding: 0 2rem 1rem;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+  padding: 1rem 0;
+  margin: 0;
+  color: #2d2d2d;
+}
+
+.form-section {
+  margin: 1rem 0.2rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.form-group {
+  grid-column: span 5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.form-group.date {
+  grid-column: span 4;
+}
+
+.error-message {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+input,
+select,
+textarea {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: #fff;
+}
+
+input::placeholder,
+select::placeholder,
+textarea::placeholder {
+  color: #9ca3af;
+}
+
+input:hover,
+select:hover,
+textarea:hover {
+  background-color: #f3f4f6;
+}
+
+input.ng-invalid.ng-touched,
+select.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched {
+  border-color: #dc2626;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.is-new-date {
+  grid-column: span 5;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.new {
+  grid-column: span 1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.new input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+
+.new label {
+  font-size: 1rem;
+  color: #4b5563;
+  cursor: pointer;
+}
+
+.date {
+  grid-column: span 4;
+}
+
+.modal-actions {
+  grid-column: span 5;
+  display: flex;
+  width: 90%;
+  margin: 1rem auto 0;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.modal-actions button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+.modal-actions button:first-child {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.modal-actions button:first-child:hover {
+  background-color: #e0e0e0;
+}
+
+.modal-actions button:last-child {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
+.modal-actions button:last-child:hover {
+  background-color: #2563eb;
+}
+
+.modal-actions button:disabled {
+  background-color: #d1d5db;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+@media (min-width: 1350px) {
+  .modal-backdrop {
+    padding: 1rem 4rem;
+  }
+
+  .modal-box {
+    max-height: calc(100vh - 8rem);
+  }
+}
+
+@media (max-width: 640px) {
+  .modal-box {
+    max-width: 90%;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .modal-actions button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}

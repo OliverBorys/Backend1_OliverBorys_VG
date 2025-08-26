@@ -1,0 +1,38 @@
+<h2 class="orders-title">Order History</h2>
+
+<button (click)="handleClearOrders()" class="clear-orders-btn">
+  Clear Order History
+</button>
+
+<div *ngIf="orders.length === 0" class="no-orders">No orders found.</div>
+
+<div *ngFor="let order of orders" class="order-card">
+  <div class="order-columns">
+    <div class="order-customer">
+      <h3>Order #{{ order.id }}</h3>
+      <p><strong>Date:</strong> {{ order.date | date: 'medium' }}</p>
+      <p><strong>Customer:</strong></p>
+      <ul>
+        <li>{{ order.customer.firstName }} {{ order.customer.lastName }}</li>
+        <li>{{ order.customer.email }}</li>
+        <li>{{ order.customer.mobilePhone }}</li>
+        <li>
+          {{ order.customer.address }},
+          {{ order.customer.city }},
+          {{ order.customer.postalCode }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="order-items">
+      <p><strong>Items:</strong></p>
+      <ul>
+        <li *ngFor="let item of order.items">
+          {{ item.productName }} x{{ item.quantity }} – ${{ item.price * item.quantity }}
+        </li>
+      </ul>
+      <p><strong>Paid with:</strong> {{ order.customer.paymentMethod }}</p>
+      <p class="total"><strong>Total:</strong> ${{ getOrderTotal(order) }}</p>
+    </div>
+  </div>
+</div>

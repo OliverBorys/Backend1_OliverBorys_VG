@@ -1,0 +1,74 @@
+<h2 class="admin-products-title">Product Management</h2>
+<section class="admin-products-table">
+  <div class="product-toolbar">
+    <input
+      type="text"
+      class="search-input"
+      placeholder="Search product..."
+      [(ngModel)]="searchQuery"
+    />
+    <button class="add-btn" (click)="openAddModal()">+ Add Product</button>
+  </div>
+
+  <table class="product-table">
+    <thead>
+      <tr>
+        <th class="small" (click)="setSort('id')">
+          ID <span *ngIf="sortColumn === 'id'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th (click)="setSort('productName')">
+          Product <span *ngIf="sortColumn === 'productName'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th class="small" (click)="setSort('categoryName')">
+          Category <span *ngIf="sortColumn === 'categoryName'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th class="medium" (click)="setSort('price')">
+          Price <span *ngIf="sortColumn === 'price'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th class="medium" (click)="setSort('isNew')">
+          New In <span *ngIf="sortColumn === 'isNew'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        </th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of filteredProducts">
+        <td class="small">{{ product.id }}</td>
+        <td class="product-cell">
+          <img
+            [src]="product.image"
+            alt="{{ product.productName }}"
+            class="product-thumbnail"
+          />
+          <span>{{ product.productName }}</span>
+        </td>
+        <td class="small">{{ product.categoryName }}</td>
+        <td class="medium">${{ product.price.toFixed(2) }}</td>
+        <td class="medium">
+          <span [ngClass]="{ tag: true, new: product.isNew === 'yes' }">
+            {{ product.isNew === 'yes' ? 'Yes' : 'No' }}
+          </span>
+        </td>
+        <td class="actions">
+          <button class="edit-btn" (click)="openEditModal(product)">Edit</button>
+          <button class="delete-btn" (click)="openDeleteModal(product)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<app-product-form
+  *ngIf="showModal"
+  [product]="selectedProduct"
+  [categories]="categories"
+  (save)="handleSave($event)"
+  (close)="closeModal()"
+></app-product-form>
+
+<app-confirm-delete-modal
+  *ngIf="showDeleteModal"
+  [itemName]="productToDelete?.productName || ''"
+  (confirm)="confirmDelete()"
+  (close)="closeDeleteModal()"
+></app-confirm-delete-modal>

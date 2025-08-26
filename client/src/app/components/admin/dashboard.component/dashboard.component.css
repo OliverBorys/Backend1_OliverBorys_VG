@@ -1,0 +1,41 @@
+.dashboard-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #2d2d2d;
+  margin: 2rem 0 3rem 0;
+}
+
+.dashboard-grid {
+  display: grid;
+  gap: 1.5rem;
+  padding: 0 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.stat-card {
+  background: #fff;
+  padding: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.stat-card:hover {
+  background: #e0e0e0;
+}
+
+@media screen and (min-width: 640px) {
+  .stat-card:last-child {
+    grid-column: span 2;
+  }
+}
+
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
