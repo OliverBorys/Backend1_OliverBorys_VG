@@ -5,4 +5,4 @@
 **/*.db-shm
 
 # Session-databas
-server/db/sessions.db
+db/sessions.db
