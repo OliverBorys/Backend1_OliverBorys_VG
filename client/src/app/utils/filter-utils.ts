@@ -1,10 +1,10 @@
 import { GridProduct } from '../models/grid-product.model';
-import { getLikedProducts } from './local-storage-utils';
 
 export function filterProducts(
   products: GridProduct[] = [],
   query: string,
-  selectedCategory: string
+  selectedCategory: string,
+  likedIds?: Set<number>
 ): GridProduct[] {
   if (!Array.isArray(products)) {
     console.error('Error: products is not an array', products);
@@ -14,8 +14,8 @@ export function filterProducts(
   const lowerQuery = query?.toLowerCase() || '';
 
   if (selectedCategory === 'favorites') {
-    const liked = getLikedProducts();
-    return products.filter((product) => liked.includes(product.id));
+    if (!likedIds) return [];
+    return products.filter((p) => likedIds.has(p.id));
   }
 
   return products.filter((product) => {

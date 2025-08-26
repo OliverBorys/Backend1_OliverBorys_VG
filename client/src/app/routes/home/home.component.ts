@@ -42,6 +42,4 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  onLikeToggled() {
-  }
 }

@@ -9,6 +9,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { GridProduct } from '../../models/grid-product.model';
 import { Category } from '../../models/category.model';
+import { Subscription } from 'rxjs';
+import { FavoritesService } from '../../services/favorites.services';
 
 @Component({
   standalone: true,
@@ -21,7 +23,7 @@ import { Category } from '../../models/category.model';
     CategoryFilterComponent,
     SortDropdownComponent,
     ProductGridComponent,
-  ]
+  ],
 })
 export class ShopComponent {
   products: GridProduct[] = [];
@@ -29,27 +31,44 @@ export class ShopComponent {
   selectedCategory: string = '';
   sort: string = 'newest';
   query: string = '';
+  likedIds = new Set<number>();
+  private favSub?: Subscription;
 
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
     private router: Router,
-    private titleService: Title
+    private titleService: Title,
+    private favs: FavoritesService
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe((params) => {
       this.query = params['q'] || '';
       this.selectedCategory = params['category'] || '';
       this.updateTitle();
     });
 
-    this.http.get<GridProduct[]>('/api/products').subscribe(data => this.products = data);
-    this.http.get<Category[]>('/api/categories').subscribe(data => this.categories = data);
+    this.http.get<GridProduct[]>('/api/products').subscribe((data) => (this.products = data));
+    this.http.get<Category[]>('/api/categories').subscribe((data) => (this.categories = data));
+
+    this.favs.load();
+    this.favSub = this.favs.likedSet$().subscribe((set) => {
+      this.likedIds = set;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.favSub?.unsubscribe();
   }
 
   get filteredAndSortedProducts(): GridProduct[] {
-    const filtered = filterProducts(this.products, this.query, this.selectedCategory);
+    const filtered = filterProducts(
+      this.products,
+      this.query,
+      this.selectedCategory,
+      this.likedIds
+    );
     return sortProducts(filtered, this.sort);
   }
 
@@ -61,16 +80,12 @@ export class ShopComponent {
     this.router.navigate([], {
       queryParams: {
         ...this.route.snapshot.queryParams,
-        category: newCategory || null
+        category: newCategory || null,
       },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
     this.selectedCategory = newCategory;
     this.updateTitle();
-  }
-
-  onLikeToggled() {
-    this.products = [...this.products];
   }
 
   updateTitle(): void {

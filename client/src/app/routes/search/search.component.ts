@@ -9,19 +9,15 @@ import { filterProducts, sortProducts } from '../../utils/filter-utils';
 import { Title } from '@angular/platform-browser';
 import { GridProduct } from '../../models/grid-product.model';
 import { Category } from '../../models/category.model';
-
+import { Subscription } from 'rxjs';
+import { FavoritesService } from '../../services/favorites.services';
 
 @Component({
   standalone: true,
   selector: 'app-search',
-  imports: [
-    CommonModule,
-    CategoryFilterComponent,
-    SortDropdownComponent,
-    ProductGridComponent,
-  ],
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css'],
+  imports: [CommonModule, CategoryFilterComponent, SortDropdownComponent, ProductGridComponent],
 })
 export class SearchComponent {
   products: GridProduct[] = [];
@@ -29,11 +25,14 @@ export class SearchComponent {
   selectedCategory = '';
   sort = 'newest';
   query = '';
+  likedIds = new Set<number>();
+  private favSub?: Subscription;
 
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
-    private titleService: Title
+    private titleService: Title,
+    private favs: FavoritesService
   ) {}
 
   ngOnInit(): void {
@@ -44,10 +43,24 @@ export class SearchComponent {
       this.query = params['q'] || '';
       this.updateTitle();
     });
+
+    this.favs.load();
+    this.favSub = this.favs.likedSet$().subscribe((set) => {
+      this.likedIds = set;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.favSub?.unsubscribe();
   }
 
   get filteredAndSortedProducts(): GridProduct[] {
-    const filtered = filterProducts(this.products, this.query, this.selectedCategory);
+    const filtered = filterProducts(
+      this.products,
+      this.query,
+      this.selectedCategory,
+      this.likedIds
+    );
     return sortProducts(filtered, this.sort);
   }
 
@@ -59,12 +72,8 @@ export class SearchComponent {
     this.selectedCategory = newCategory;
   }
 
-  onLikeToggled() {}
-
   private updateTitle(): void {
-    const title = this.query
-      ? `Search results for: ${this.query}`
-      : 'Search';
+    const title = this.query ? `Search results for: ${this.query}` : 'Search';
     this.titleService.setTitle(title);
   }
 }

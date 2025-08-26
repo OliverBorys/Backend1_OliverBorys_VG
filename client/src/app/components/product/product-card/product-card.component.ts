@@ -1,7 +1,8 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { toggleLikeProduct, isProductLiked } from '../../../utils/local-storage-utils';
+import { Subscription } from 'rxjs';
+import { FavoritesService } from '../../../services/favorites.services';
 
 @Component({
   standalone: true,
@@ -10,7 +11,7 @@ import { toggleLikeProduct, isProductLiked } from '../../../utils/local-storage-
   styleUrls: ['./product-card.component.css'],
   imports: [CommonModule, RouterModule]
 })
-export class ProductCardComponent {
+export class ProductCardComponent implements OnInit, OnDestroy {
   @Input() product!: {
     id: number;
     productName: string;
@@ -20,20 +21,25 @@ export class ProductCardComponent {
     brand?: string;
   };
 
-  @Output() likeToggled = new EventEmitter<void>();
+  liked = false;
+  private sub?: Subscription;
 
-  liked: boolean = false;
+  constructor(private favs: FavoritesService) {}
 
   ngOnInit(): void {
-    this.liked = isProductLiked(this.product.id);
+    this.sub = this.favs.likedSet$().subscribe(set => {
+      this.liked = set.has(this.product.id);
+    });
   }
 
-  onLikeClick(event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    const updatedLikes = toggleLikeProduct(this.product.id);
-    this.liked = updatedLikes.includes(this.product.id);
-    this.likeToggled.emit();
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+  }
+
+  onLikeClick(e: MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.favs.toggle(this.product.id);
   }
 
   getLikeIcon(): string {
