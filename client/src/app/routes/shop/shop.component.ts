@@ -4,7 +4,7 @@ import { CategoryFilterComponent } from '../../components/product/category-filte
 import { SortDropdownComponent } from '../../components/product/sort-dropdown/sort-dropdown.component';
 import { ProductGridComponent } from '../../components/product/product-grid/product-grid.component';
 import { filterProducts, sortProducts } from '../../utils/filter-utils';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { GridProduct } from '../../models/grid-product.model';
@@ -19,7 +19,6 @@ import { FavoritesService } from '../../services/favorites.services';
   styleUrls: ['./shop.component.css'],
   imports: [
     CommonModule,
-    HttpClientModule,
     CategoryFilterComponent,
     SortDropdownComponent,
     ProductGridComponent,

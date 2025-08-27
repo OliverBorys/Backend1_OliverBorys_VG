@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ProductGridComponent } from '../../components/product/product-grid/product-grid.component';
 import { HeroSectionComponent } from '../../components/home/hero-section/hero-section.component';
 import { CategoryGridComponent } from '../../components/home/category-grid/category-grid.component';
@@ -15,7 +15,6 @@ import { GridProduct } from '../../models/grid-product.model';
   styleUrls: ['./home.component.css'],
   imports: [
     CommonModule,
-    HttpClientModule,
     HeroSectionComponent,
     CategoryGridComponent,
     AboutFindUsComponent,
