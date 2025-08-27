@@ -31,7 +31,7 @@
         [queryParams]="{ category: 'favorites' }"
         aria-label="Favorites"
       >
-        <img src="/images/like-icon.svg" alt="Favorites" class="icon" />
+        <img [src]="isHeaderWhite ? '/images/like-icon.svg' : '/images/like-icon-white.svg'" alt="Favorites" class="icon" />
         <span class="badge" *ngIf="likedCount > 0">{{ likedCount }}</span>
       </a>
 
