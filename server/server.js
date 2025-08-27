@@ -166,11 +166,9 @@ app.post("/api/auth/register", async (req, res) => {
       .status(201)
       .json({ id: result.lastInsertRowid, username, role: finalRole });
   } catch (e) {
-    res
-      .status(409)
-      .json({
-        error: "This username is already taken. Please try another one",
-      });
+    res.status(409).json({
+      error: "This username is already taken. Please try another one",
+    });
   }
 });
 
@@ -184,15 +182,29 @@ app.post("/api/auth/login", async (req, res) => {
   const ok = await comparePassword(password, user.password);
   if (!ok) return res.status(401).json({ error: "Wrong username or password" });
 
+  const guestFavs = Array.isArray(req.session.guestFavorites)
+    ? [...req.session.guestFavorites]
+    : [];
+
   req.session.regenerate((err) => {
     if (err)
-      return res.status(500).json({ error: "Sessionfel vid inloggning" });
+      return res.status(500).json({ error: "Session error during login" });
 
     req.session.user = {
       id: user.id,
       username: user.username,
       role: user.role,
     };
+
+    if (guestFavs.length > 0) {
+      const insertFav = db.prepare(
+        "INSERT OR IGNORE INTO favorites (user_id, product_id) VALUES (?, ?)"
+      );
+      const tx = db.transaction((uids, pids) => {
+        for (const pid of pids) insertFav.run(uids, pid);
+      });
+      tx(user.id, guestFavs);
+    }
 
     req.session.guestFavorites = [];
 
