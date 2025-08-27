@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
 import { ProductFormComponent } from '../product-form.component/product-form.component';
-import { ConfirmDeleteModalComponent } from '../conirm-delete-modal.component/confirm-delete-modal.component';
+import { ConfirmDeleteModalComponent } from '../confirm-delete-modal.component/confirm-delete-modal.component';
 import { Category } from '../../../models/category.model';
 import { FullProduct } from '../../../models/full-product.model';
 
