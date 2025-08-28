@@ -11,5 +11,9 @@
     <app-sort-dropdown [sort]="sort" (sortChange)="onSortChange($event)"></app-sort-dropdown>
   </div>
 
-  <app-product-grid [products]="filteredAndSortedProducts" [query]="query"></app-product-grid>
+  <app-product-grid
+    [products]="filteredAndSortedProducts"
+    [query]="query"
+    [selectedCategory]="selectedCategory"
+  ></app-product-grid>
 </section>

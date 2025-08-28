@@ -3,6 +3,7 @@
     <app-product-card
       *ngFor="let product of visibleProducts"
       [product]="product"
+      [hideNewBadge]="selectedCategory.toLowerCase() === 'new'"
       (likeToggled)="onLikeToggle()"
     ></app-product-card>
   </ng-container>
