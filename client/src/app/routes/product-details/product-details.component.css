@@ -28,3 +28,9 @@
     justify-content: center;
   }
 }
+
+@media (max-width: 640px) {
+    .product-swiper {
+    display: none;
+  }
+}

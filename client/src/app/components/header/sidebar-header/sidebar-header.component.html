@@ -22,9 +22,19 @@
     <a [routerLink]="['/contact']" class="nav-link" [class.dark]="isHeaderWhite"
       >Contact <span class="header-underline"></span
     ></a>
-    <a *ngIf="state?.isLoggedIn" [routerLink]="['/admin']" class="nav-link" [class.dark]="isHeaderWhite"
-      >Admin <span class="header-underline"></span
-    ></a>
+     <a *ngIf="state?.user?.role === 'admin'"
+     [routerLink]="['/admin']"
+     class="nav-link"
+     [class.dark]="isHeaderWhite">
+    Admin <span class="header-underline"></span>
+  </a>
+
+  <a *ngIf="state?.user"
+     [routerLink]="['/account']"
+     class="nav-link"
+     [class.dark]="isHeaderWhite">
+    Account <span class="header-underline"></span>
+  </a>
   </nav>
 
   <nav
@@ -45,8 +55,7 @@
     <a [routerLink]="['/shop']" (click)="closeSidebar()">Shop</a>
     <a [routerLink]="['/about']" (click)="closeSidebar()">About</a>
     <a [routerLink]="['/contact']" (click)="closeSidebar()">Contact</a>
-    <a *ngIf="state?.isLoggedIn" [routerLink]="['/admin']" (click)="closeSidebar()"
-      >Admin</a
-    >
+  <a *ngIf="state?.user?.role === 'admin'" [routerLink]="['/admin']" (click)="closeSidebar()">Admin</a>
+  <a *ngIf="state?.user" [routerLink]="['/account']" (click)="closeSidebar()">Account</a>
   </nav>
 </section>

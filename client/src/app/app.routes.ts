@@ -6,12 +6,18 @@ import { ShopComponent } from './routes/shop/shop.component';
 import { ProductDetailsComponent } from './routes/product-details/product-details.component';
 import { SearchComponent } from './routes/search/search.component';
 import { CheckoutComponent } from './routes/checkout/checkout.component';
+
+import { NotFoundComponent } from './routes/not-found/not-found.component';
+
+import { AccountComponent } from './components/account/account.component';
+
 import { AdminComponent } from './routes/admin/admin.component/admin.component';
 import { DashboardComponent } from './components/admin/dashboard.component/dashboard.component';
 import { OrdersComponent } from './components/admin/orders.component/orders.component';
 import { ProductsComponent } from './components/admin/products.component/products.component';
 import { HeroImagesComponent } from './components/admin/hero-images.component/hero-images.component';
-import { AuthGuard } from './guards/auth.guard';
+
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -22,9 +28,18 @@ export const routes: Routes = [
   { path: 'search', component: SearchComponent },
   { path: 'checkout', component: CheckoutComponent },
   {
+    path: 'account',
+    component: AccountComponent,
+    canActivate: [authGuard],
+    data: { role: 'customer' }
+  },
+
+  {
     path: 'admin',
     component: AdminComponent,
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
+    canActivateChild: [authGuard],
+    data: { role: 'admin' },
     children: [
       { path: '', component: DashboardComponent },
       { path: 'products', component: ProductsComponent },
@@ -32,4 +47,7 @@ export const routes: Routes = [
       { path: 'orders', component: OrdersComponent },
     ],
   },
+
+  { path: '404', component: NotFoundComponent },
+  { path: '**', redirectTo: '404' }
 ];

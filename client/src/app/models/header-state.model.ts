@@ -2,7 +2,7 @@ import { User } from "./user.model";
 
 export interface HeaderState {
   isLoggedIn: boolean;
-  user: User | null;
+  user?: User | null;
   isScrolled: boolean;
   isHovered: boolean;
   isSidebarOpen: boolean;
