@@ -38,7 +38,11 @@ export class LoginHeaderComponent implements OnInit, OnDestroy {
     this.stateSub = this.headerService.state$.subscribe((state) => {
       this.state = state;
     });
-    this.removeClickListener = this.renderer.listen('document', 'mousedown', this.handleClickOutside);
+    this.removeClickListener = this.renderer.listen(
+      'document',
+      'mousedown',
+      this.handleClickOutside
+    );
   }
 
   ngOnDestroy(): void {
@@ -85,8 +89,12 @@ export class LoginHeaderComponent implements OnInit, OnDestroy {
     this.http
       .post<LoginResponse>('/api/auth/login', { username, password }, { withCredentials: true })
       .subscribe({
-        next: (res) => {
+        next: async (res) => {
           this.headerService.setLoggedIn(res.user);
+
+          // ⬇️ NYTT: ladda om varukorgen från servern (migrerad guest→DB)
+          await this.headerService.rehydrateAfterAuthChange();
+
           this.isPopupOpen = false;
           this.isRegisterMode = false;
           this.errorMsg = '';
@@ -110,14 +118,26 @@ export class LoginHeaderComponent implements OnInit, OnDestroy {
     }
 
     this.http
-      .post('/api/auth/register', { username, password, role: 'customer' }, { withCredentials: true })
+      .post(
+        '/api/auth/register',
+        { username, password, role: 'customer' },
+        { withCredentials: true }
+      )
       .subscribe({
         next: () => {
           this.http
-            .post<LoginResponse>('/api/auth/login', { username, password }, { withCredentials: true })
+            .post<LoginResponse>(
+              '/api/auth/login',
+              { username, password },
+              { withCredentials: true }
+            )
             .subscribe({
-              next: (res) => {
+              next: async (res) => {
                 this.headerService.setLoggedIn(res.user);
+
+                // ⬇️ NYTT: samma synk efter auto-login
+                await this.headerService.rehydrateAfterAuthChange();
+
                 this.isPopupOpen = false;
                 this.isRegisterMode = false;
                 this.errorMsg = '';
@@ -137,22 +157,29 @@ export class LoginHeaderComponent implements OnInit, OnDestroy {
 
   handleLogout() {
     this.http.post('/api/auth/logout', {}, { withCredentials: true }).subscribe({
-      next: () => {
+      next: async () => {
         this.headerService.logout();
+
+        // ⬇️ NYTT: ladda om varukorgen från servern (tom gäst-cart)
+        await this.headerService.rehydrateAfterAuthChange();
+
         this.favs.reset();
         this.favs.load();
         this.isPopupOpen = false;
         this.isRegisterMode = false;
         this.errorMsg = '';
       },
-      error: () => {
+      error: async () => {
+        // även om logout-anropet faller, nollställ lokalt och försök synka
         this.headerService.logout();
+        await this.headerService.rehydrateAfterAuthChange();
+
         this.favs.reset();
         this.favs.load();
         this.isPopupOpen = false;
         this.isRegisterMode = false;
         this.errorMsg = '';
-      }
+      },
     });
   }
 }

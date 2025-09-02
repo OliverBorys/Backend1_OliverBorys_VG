@@ -6,11 +6,6 @@ import {
   ElementRef,
   Renderer2,
 } from '@angular/core';
-import {
-  getCartItems,
-  removeFromCart,
-  updateCartQuantity,
-} from '../../../utils/local-storage-utils';
 import { CartItem } from '../../../models/cart-item.model';
 import { HeaderState } from '../../../models/header-state.model';
 import { HeaderService } from '../header.service';
@@ -27,11 +22,13 @@ import { Subscription } from 'rxjs';
 })
 export class CartHeaderComponent implements OnInit, OnDestroy {
   @Input() isHeaderWhite = false;
-  cartItems = getCartItems();
-  state!: HeaderState;
 
-  private stateSub!: Subscription;
-  private cartChangedSub!: Subscription;
+  state!: HeaderState;
+  cartItems: CartItem[] = [];
+  total = 0;
+
+  private stateSub?: Subscription;
+  private cartSub?: Subscription;
   private removeClickListener: () => void = () => {};
 
   constructor(
@@ -45,8 +42,9 @@ export class CartHeaderComponent implements OnInit, OnDestroy {
       this.state = state;
     });
 
-    this.cartChangedSub = this.headerService.cartChanged$.subscribe(() => {
-      this.cartItems = getCartItems();
+    this.cartSub = this.headerService.cart$.subscribe(({ items, total }) => {
+      this.cartItems = items;
+      this.total = total;
     });
 
     this.removeClickListener = this.renderer.listen(
@@ -58,18 +56,14 @@ export class CartHeaderComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.stateSub?.unsubscribe();
-    this.cartChangedSub?.unsubscribe();
+    this.cartSub?.unsubscribe();
     this.removeClickListener();
   }
 
   handleClickOutside = (event: MouseEvent) => {
     setTimeout(() => {
       const cart = this.el.nativeElement.querySelector('.cart-drawer');
-      if (
-        this.state?.isCartOpen &&
-        cart &&
-        !cart.contains(event.target as Node)
-      ) {
+      if (this.state?.isCartOpen && cart && !cart.contains(event.target as Node)) {
         this.headerService.closeCart();
       }
     }, 0);
@@ -80,33 +74,20 @@ export class CartHeaderComponent implements OnInit, OnDestroy {
     this.toggleCart();
   }
 
-  toggleCart() {
-    this.headerService.toggleCart();
-  }
+  toggleCart() { this.headerService.toggleCart(); }
+  closeCart()  { this.headerService.closeCart(); }
 
-  handleRemove(event: Event, productId: number) {
+  async handleRemove(event: Event, productId: number) {
     event.stopPropagation();
-    removeFromCart(productId);
-    this.cartItems = getCartItems();
+    await this.headerService.remove(productId);
   }
 
-  changeQuantity(event: Event, productId: number, quantity: number) {
+  async changeQuantity(event: Event, productId: number, quantity: number) {
     event.stopPropagation();
-    updateCartQuantity(productId, quantity);
-    this.cartItems = getCartItems();
+    // Låt 0 bli "ta bort"
+    if (quantity < 0) return;
+    await this.headerService.setQuantity(productId, quantity);
   }
 
-  closeCart() {
-    this.headerService.closeCart();
-  }
-
-  trackById(index: number, item: CartItem): number {
-    return item.id;
-  }
-
-  get total() {
-    return this.cartItems
-      .reduce((acc, item) => acc + item.price * item.quantity, 0)
-      .toFixed(2);
-  }
+  trackById(index: number, item: CartItem): number { return item.id; }
 }

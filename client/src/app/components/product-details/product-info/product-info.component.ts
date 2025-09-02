@@ -36,21 +36,11 @@ export class ProductInfoComponent implements OnInit {
     }
   }
 
-  handleAddToCart(): void {
-    const productToSave = { ...this.product, size: this.selectedSize };
-    let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-    const existing = cartItems.find((item: any) => item.id === productToSave.id);
-
-    if (existing) {
-      existing.quantity += 1;
-    } else {
-      cartItems.push({ ...productToSave, quantity: 1 });
-    }
-
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-
-    this.headerService.openCartTemporarily();
-    this.headerService.notifyCartChanged();
+  async handleAddToCart(): Promise<void> {
+    // Storleken används bara i UI just nu (order_items i backend lagrar inte size).
+    // Vill du spara size i DB senare: utöka API:t och tabellen.
+    await this.headerService.addToCart(this.product.id);   // POST /api/cart/:id
+    this.headerService.openCartTemporarily();              // öppna lådan som innan
     this.cartUpdated.emit(true);
   }
 }

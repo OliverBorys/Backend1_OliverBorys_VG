@@ -1,13 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  getCartItems,
-  removeFromCart,
-  updateCartQuantity
-} from '../../../utils/local-storage-utils';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CartItem } from '../../../models/cart-item.model';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { HeaderService } from '../../header/header.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-product-grid',
@@ -16,47 +12,39 @@ import { HeaderService } from '../../header/header.service';
   standalone: true,
   imports: [NgIf, NgFor, CommonModule],
 })
-export class ProductGridComponent implements OnInit {
+export class ProductGridComponent implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];
+  total = 0;
+
+  private sub?: Subscription;
 
   constructor(private headerService: HeaderService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.sub = this.headerService.cart$.subscribe(({ items, total }) => {
+      this.cartItems = items;
+      this.total = total;
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
+  }
 
   goToProduct(productId: number): void {
     this.router.navigate(['/product', productId]);
   }
 
-  ngOnInit(): void {
-    this.cartItems = getCartItems();
-
-    this.headerService.cartChanged$.subscribe(() => {
-      this.cartItems = getCartItems();
-    });
+  async changeQuantity(productId: number, quantity: number): Promise<void> {
+    if (quantity < 0) return;
+    await this.headerService.setQuantity(productId, quantity);
   }
 
-  changeQuantity(productId: number, quantity: number): void {
-    if (quantity < 1) return;
-
-    updateCartQuantity(productId, quantity);
-
-    const item = this.cartItems.find((i) => i.id === productId);
-    if (item) item.quantity = quantity;
-
-    this.headerService.notifyCartChanged();
-  }
-
-  removeItem(productId: number): void {
-    removeFromCart(productId);
-    this.cartItems = this.cartItems.filter((item) => item.id !== productId);
-    this.headerService.notifyCartChanged();
+  async removeItem(productId: number): Promise<void> {
+    await this.headerService.remove(productId);
   }
 
   trackById(index: number, item: CartItem): number {
     return item.id;
-  }
-
-  get total(): string {
-    return this.cartItems
-      .reduce((sum, item) => sum + item.price * item.quantity, 0)
-      .toFixed(2);
   }
 }

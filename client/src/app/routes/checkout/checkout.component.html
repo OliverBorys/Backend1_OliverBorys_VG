@@ -5,7 +5,8 @@
       <app-product-grid></app-product-grid>
     </div>
     <div class="payment-panel">
-      <app-payment-form></app-payment-form>
+      <app-payment-form (success)="handlePaymentSuccess()"
+  (back)="handleBackFromModal()"></app-payment-form>
     </div>
   </section>
 </div>
