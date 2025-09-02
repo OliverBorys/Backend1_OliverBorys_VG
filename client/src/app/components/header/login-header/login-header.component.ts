@@ -1,4 +1,5 @@
 import { Component, Input, ElementRef, OnDestroy, OnInit, Renderer2 } from '@angular/core';
+import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { HeaderService } from '../header.service';
 import { HeaderState } from '../../../models/header-state.model';
@@ -30,6 +31,7 @@ export class LoginHeaderComponent implements OnInit, OnDestroy {
     public headerService: HeaderService,
     private el: ElementRef,
     private http: HttpClient,
+    private router: Router,
     private renderer: Renderer2,
     private favs: FavoritesService
   ) {}
@@ -159,8 +161,6 @@ export class LoginHeaderComponent implements OnInit, OnDestroy {
     this.http.post('/api/auth/logout', {}, { withCredentials: true }).subscribe({
       next: async () => {
         this.headerService.logout();
-
-        // ⬇️ NYTT: ladda om varukorgen från servern (tom gäst-cart)
         await this.headerService.rehydrateAfterAuthChange();
 
         this.favs.reset();
@@ -168,9 +168,9 @@ export class LoginHeaderComponent implements OnInit, OnDestroy {
         this.isPopupOpen = false;
         this.isRegisterMode = false;
         this.errorMsg = '';
+        this.router.navigateByUrl('/');
       },
       error: async () => {
-        // även om logout-anropet faller, nollställ lokalt och försök synka
         this.headerService.logout();
         await this.headerService.rehydrateAfterAuthChange();
 
@@ -179,6 +179,7 @@ export class LoginHeaderComponent implements OnInit, OnDestroy {
         this.isPopupOpen = false;
         this.isRegisterMode = false;
         this.errorMsg = '';
+        this.router.navigateByUrl('/');
       },
     });
   }
