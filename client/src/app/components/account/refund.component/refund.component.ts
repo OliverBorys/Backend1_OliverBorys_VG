@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 
 @Component({
@@ -11,5 +12,14 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./refund.component.css'],
 })
 export class RefundsComponent {
+  constructor(
+    private titleService: Title
+  ) {}
+
   pageTitle = 'Returns & Refunds';
+
+
+  ngOnInit(): void {
+    this.titleService.setTitle('Returns & refunds');
+  }
 }

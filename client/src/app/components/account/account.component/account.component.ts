@@ -10,6 +10,7 @@ import {
   NonNullableFormBuilder,
 } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Title } from '@angular/platform-browser';
 
 /** Hjälpvaliderare: matcha två fält i samma FormGroup */
 function matchValidator(a: string, b: string) {
@@ -70,7 +71,7 @@ export class AccountComponent implements OnInit {
   usernameMessage = '';
   passwordMessage = '';
 
-  constructor(private fb: NonNullableFormBuilder, private http: HttpClient) {
+  constructor(private fb: NonNullableFormBuilder, private title: Title, private http: HttpClient) {
     // Initiera kontroller med default-värden som tomma strängar (NonNullable)
     this.profileForm = this.fb.group({
       firstName: this.fb.control(''),
@@ -101,6 +102,7 @@ export class AccountComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.title.setTitle('Account');
     this.loadData();
   }
 
@@ -108,26 +110,26 @@ export class AccountComponent implements OnInit {
     this.loadingProfile = true;
 
     // Hämtar profil (servern returnerar tomma strängar om ingen profil finns)
-    this.http.get<ProfileDTO>('/api/profile', { withCredentials: true })
-      .subscribe({
-        next: (p) => {
-          if (p) {
-            this.profileForm.patchValue({
-              firstName: p.firstName ?? '',
-              lastName: p.lastName ?? '',
-              email: p.email ?? '',
-              mobilePhone: p.mobilePhone ?? '',
-              address: p.address ?? '',
-              city: p.city ?? '',
-              postalCode: p.postalCode ?? '',
-            });
-          }
-        },
-        complete: () => (this.loadingProfile = false),
-      });
+    this.http.get<ProfileDTO>('/api/profile', { withCredentials: true }).subscribe({
+      next: (p) => {
+        if (p) {
+          this.profileForm.patchValue({
+            firstName: p.firstName ?? '',
+            lastName: p.lastName ?? '',
+            email: p.email ?? '',
+            mobilePhone: p.mobilePhone ?? '',
+            address: p.address ?? '',
+            city: p.city ?? '',
+            postalCode: p.postalCode ?? '',
+          });
+        }
+      },
+      complete: () => (this.loadingProfile = false),
+    });
 
     // Hämtar nuvarande username
-    this.http.get<{ user: { username: string } | null }>('/api/auth/me', { withCredentials: true })
+    this.http
+      .get<{ user: { username: string } | null }>('/api/auth/me', { withCredentials: true })
       .subscribe((res) => {
         if (res?.user?.username) {
           this.usernameForm.patchValue({ username: res.user.username });
@@ -143,7 +145,8 @@ export class AccountComponent implements OnInit {
     this.profileMessage = '';
     this.savingProfile = true;
 
-    this.http.put('/api/profile', this.profileForm.getRawValue(), { withCredentials: true })
+    this.http
+      .put('/api/profile', this.profileForm.getRawValue(), { withCredentials: true })
       .subscribe({
         next: () => (this.profileMessage = 'Profil sparad ✅'),
         error: (err) => (this.profileMessage = err?.error?.error || 'Kunde inte spara profil'),
@@ -159,7 +162,10 @@ export class AccountComponent implements OnInit {
     this.usernameMessage = '';
     this.savingUsername = true;
 
-    this.http.put<{ username?: string }>('/api/account/username', this.usernameForm.getRawValue(), { withCredentials: true })
+    this.http
+      .put<{ username?: string }>('/api/account/username', this.usernameForm.getRawValue(), {
+        withCredentials: true,
+      })
       .subscribe({
         next: (resp) => {
           this.usernameMessage = 'Användarnamn uppdaterat ✅';
@@ -167,7 +173,8 @@ export class AccountComponent implements OnInit {
             this.usernameForm.patchValue({ username: resp.username });
           }
         },
-        error: (err) => (this.usernameMessage = err?.error?.error || 'Kunde inte uppdatera användarnamn'),
+        error: (err) =>
+          (this.usernameMessage = err?.error?.error || 'Kunde inte uppdatera användarnamn'),
         complete: () => (this.savingUsername = false),
       });
   }
@@ -185,19 +192,24 @@ export class AccountComponent implements OnInit {
       newPassword: this.passwordForm.controls.newPassword.value,
     };
 
-    this.http.put('/api/account/password', payload, { withCredentials: true })
-      .subscribe({
-        next: () => {
-          this.passwordMessage = 'Lösenord uppdaterat ✅';
-          this.passwordForm.reset();
-        },
-        error: (err) => (this.passwordMessage = err?.error?.error || 'Kunde inte uppdatera lösenord'),
-        complete: () => (this.savingPassword = false),
-      });
+    this.http.put('/api/account/password', payload, { withCredentials: true }).subscribe({
+      next: () => {
+        this.passwordMessage = 'Lösenord uppdaterat ✅';
+        this.passwordForm.reset();
+      },
+      error: (err) => (this.passwordMessage = err?.error?.error || 'Kunde inte uppdatera lösenord'),
+      complete: () => (this.savingPassword = false),
+    });
   }
 
   // Korta getters för template
-  get pf() { return this.profileForm.controls; }
-  get uf() { return this.usernameForm.controls; }
-  get pwf() { return this.passwordForm.controls; }
+  get pf() {
+    return this.profileForm.controls;
+  }
+  get uf() {
+    return this.usernameForm.controls;
+  }
+  get pwf() {
+    return this.passwordForm.controls;
+  }
 }

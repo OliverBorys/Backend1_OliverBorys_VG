@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-
+import { Title } from '@angular/platform-browser';
 import { SortDropdownComponent } from '../../product/sort-dropdown/sort-dropdown.component';
 import { ProductGridComponent } from '../../product/product-grid/product-grid.component';
 
@@ -31,14 +31,13 @@ export class FavoritesComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpClient,
+    private title: Title,
     private favs: FavoritesService
   ) {}
 
   ngOnInit(): void {
-    // Hämta alla produkter (grid/filtrering löser favorites)
     this.http.get<GridProduct[]>('/api/products').subscribe((data) => (this.products = data));
-
-    // Ladda och lyssna på favoriter (samma som Shop)
+    this.title.setTitle('Favorites');
     this.favs.load();
     this.favSub = this.favs.likedSet$().subscribe((set) => {
       this.likedIds = set;
