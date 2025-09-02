@@ -2,14 +2,44 @@
   <form [formGroup]="form">
     <h2 class="section-title">Your Information</h2>
     <div class="form-row name-row">
-      <input type="text" placeholder="First name" formControlName="firstName" class="form-input input-left" />
-      <input type="text" placeholder="Last name" formControlName="lastName" class="form-input input-right" />
+      <input
+        type="text"
+        placeholder="First name"
+        formControlName="firstName"
+        class="form-input input-left"
+      />
+      <input
+        type="text"
+        placeholder="Last name"
+        formControlName="lastName"
+        class="form-input input-right"
+      />
     </div>
-    <input type="email" placeholder="Email address" formControlName="email" class="form-input full-input" />
-    <input type="tel" placeholder="Phone number" formControlName="mobilePhone" class="form-input full-input" />
-    <input type="text" placeholder="Address" formControlName="address" class="form-input full-input" />
+    <input
+      type="email"
+      placeholder="Email address"
+      formControlName="email"
+      class="form-input full-input"
+    />
+    <input
+      type="tel"
+      placeholder="Phone number"
+      formControlName="mobilePhone"
+      class="form-input full-input"
+    />
+    <input
+      type="text"
+      placeholder="Address"
+      formControlName="address"
+      class="form-input full-input"
+    />
     <input type="text" placeholder="City" formControlName="city" class="form-input full-input" />
-    <input type="text" placeholder="Postal code" formControlName="postalCode" class="form-input full-input last-input" />
+    <input
+      type="text"
+      placeholder="Postal code"
+      formControlName="postalCode"
+      class="form-input full-input last-input"
+    />
     <h2 class="payment-title">Payment</h2>
     <div class="payment-methods">
       <label
@@ -29,29 +59,23 @@
           />
           <span>Pay with {{ method }}</span>
         </div>
-        <img
-          [src]="paymentIcons[method]"
-          [alt]="method + ' icon'"
-          class="payment-icon"
-        />
+        <img [src]="paymentIcons[method]" [alt]="method + ' icon'" class="payment-icon" />
       </label>
     </div>
+    <label style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem">
+      <input type="checkbox" formControlName="saveToProfile" />
+      <span>Spara uppgifterna på min profil</span>
+    </label>
   </form>
   <div class="purchase-container">
-    <button (click)="handlePurchase()" class="purchase-button">
-      Pay Purchase
-    </button>
+    <button (click)="handlePurchase()" class="purchase-button">Pay Purchase</button>
 
     <div class="modal-overlay" *ngIf="showModal">
       <div class="modal-box">
         <h2>Thank you for your purchase!</h2>
-        <a
-          [routerLink]="['/']"
-          (click)="handleBackToHome()"
-          class="modal-back-btn"
-        >
+        <button type="button" (click)="handleBackToHome()" class="modal-back-btn">
           Back to Home
-        </a>
+        </button>
       </div>
     </div>
   </div>
