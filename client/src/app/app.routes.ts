@@ -13,7 +13,7 @@ import { accountComponent } from './routes/account/account.component/account.com
 import { AccountComponent } from './components/account/account.component/account.component';
 import { FavoritesComponent } from './components/account/favorites.component/favorites.component';
 import { YourOrdersComponent } from './components/account/your-orders.component/your-orders.component';
-import { RefoundComponent } from './components/account/refound.component/refound.component';
+import { RefundsComponent } from './components/account/refund.component/refund.component';
 
 import { AdminComponent } from './routes/admin/admin.component/admin.component';
 import { DashboardComponent } from './components/admin/dashboard.component/dashboard.component';
@@ -41,7 +41,7 @@ export const routes: Routes = [
       { path: '', component: AccountComponent },
       { path: 'your-orders', component: YourOrdersComponent },
       { path: 'favorites',  component: FavoritesComponent },
-      { path: 'refound', component: RefoundComponent },
+      { path: 'refund', component: RefundsComponent },
     ],
   },
 

@@ -1,0 +1,72 @@
+<h2 class="refund-title">{{ pageTitle }}</h2>
+
+<section class="refunds">
+  <div class="card hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <h2>Make a return/refund</h2>
+        <p>
+          Here you can read about how returns and refunds work.
+        </p>
+      </div>
+
+      <!-- Knappen gör ingenting (ingen (click), ingen routerLink) -->
+      <button type="button" class="btn-primary" title="Kommer snart">
+        Make a refund
+      </button>
+    </div>
+  </div>
+
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-header">
+        <h3>How it works?</h3>
+      </div>
+      <div class="card-body">
+        <ul class="list">
+          <li>You may return items within 30 days of delivery.</li>
+          <li>The product must be unused and in its original condition.</li>
+          <li>A refund is issued once the return has been received and approved.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>Guidelines</h3>
+      </div>
+      <div class="card-body">
+        <ul class="list">
+          <li>Save your receipt/order confirmation.</li>
+          <li>Pack the item well to avoid damage.</li>
+          <li>Refunds are issued to the same account the purchase was made from.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>FAQ</h3>
+      </div>
+      <div class="card-body">
+        <ul class="list">
+          <li>Refunds usually appear within 3–5 business days.</li>
+          <li>Shipping costs are reimbursed according to our terms.</li>
+          <li>Sale items may be subject to special return conditions.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card info">
+    <div class="card-body info-body">
+      <div class="info-text">
+        <h3>Can't find your answer here?</h3>
+        <p>Contact our support</p>
+      </div>
+      <div class="info-actions">
+        <a [routerLink]="['/contact']" class="contact-button">Contact</a>
+      </div>
+    </div>
+  </div>
+</section>

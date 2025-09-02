@@ -1,0 +1,117 @@
+.refund-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #2d2d2d;
+  margin: 2rem 0 3rem 0;
+}
+
+.refunds {
+  display: grid;
+  gap: 1rem;
+  margin: 0 2rem;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fff;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+.card-header {
+  padding: 1rem 1rem 0.6rem;
+  border-bottom: 1px solid #ddd;
+}
+.card-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.card-body {
+  padding: 1rem;
+}
+
+.hero .hero-content {
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+.hero .hero-text h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+}
+.hero .hero-text p {
+  margin: 0;
+  color: #333;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 1000px) {
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.list {
+  margin: 0;
+  padding-left: 1rem;
+  color: #333;
+}
+.list li {
+  margin: 0.35rem 0;
+}
+
+.info .info-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.info .info-text h3 {
+  margin: 0 0 0.25rem;
+}
+.info .info-text p {
+  margin: 0;
+  color: #333;
+}
+
+.btn-primary {
+  border: none;
+  background: #1d4ed8;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: none;
+}
+.btn-primary:hover {
+  background: #fff;
+  color: #1d4ed8;
+  border: 1px #1d4ed8 solid;
+}
+
+.contact-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #f0f0f0;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.contact-button:hover {
+  background-color: #e0e0e0;
+}
