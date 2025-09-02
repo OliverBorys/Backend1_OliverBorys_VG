@@ -17,6 +17,7 @@ export class PaymentFormComponent implements OnInit {
 
   form!: FormGroup;
   showModal = false;
+  isSubmitting = false;
 
   paymentMethods = ['Card', 'Swish', 'Klarna', 'PayPal'];
   paymentIcons: Record<string, string> = {
@@ -40,35 +41,19 @@ export class PaymentFormComponent implements OnInit {
       city: ['', Validators.required],
       postalCode: ['', Validators.required],
       paymentMethod: ['', Validators.required],
-
       saveToProfile: [false],
     });
 
     this.prefillForLoggedInUser();
   }
 
-  private prefillForLoggedInUser(): void {
-    this.http
-      .get<{ user: any; profile?: any }>('/api/auth/me', { withCredentials: true })
-      .subscribe({
-        next: (res) => {
-          if (res?.user && (res as any).profile) {
-            const p = (res as any).profile;
-            this.form.patchValue({
-              firstName: p.firstName || '',
-              lastName: p.lastName || '',
-              email: p.email || '',
-              mobilePhone: p.mobilePhone || '',
-              address: p.address || '',
-              city: p.city || '',
-              postalCode: p.postalCode || '',
-            });
-          } else if (res?.user) {
-            this.loadProfile();
-          }
-        },
-        error: () => this.loadProfile(),
-      });
+private prefillForLoggedInUser(): void {
+    this.http.get<{ user: any }>('/api/auth/me', { withCredentials: true }).subscribe({
+      next: (res) => {
+        if (res?.user) this.loadProfile();
+      },
+      error: () => void 0,
+    });
   }
 
   private loadProfile(): void {
@@ -87,20 +72,53 @@ export class PaymentFormComponent implements OnInit {
   }
 
   handlePurchase() {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.isSubmitting) {
       this.form.markAllAsTouched();
       return;
     }
 
-    const { firstName, lastName, email, mobilePhone, address, city, postalCode, saveToProfile } =
-      this.form.value;
+    this.isSubmitting = true;
 
-    // 1) Kolla om inloggad
+    const {
+      firstName,
+      lastName,
+      email,
+      mobilePhone,
+      address,
+      city,
+      postalCode,
+      paymentMethod,
+      saveToProfile,
+    } = this.form.value;
+
+    // 1) Check login status
     this.http.get<{ user: any }>('/api/auth/me', { withCredentials: true }).subscribe({
       next: (me) => {
         const isLoggedIn = !!me?.user;
 
-        // 2) Om inloggad och ska spara → PUT /api/profile
+        const afterProfileSave = () => {
+          if (isLoggedIn) {
+            // 2) Logged in: finalize order and store payment method
+            this.http
+              .post(
+                '/api/orders/checkout',
+                { paymentMethod: this.form.controls['paymentMethod'].value }, // <— THIS populates orders.payment_method
+                { withCredentials: true }
+              )
+              .subscribe({
+                next: () => this.finishPurchase(),
+                error: () => this.finishPurchase(), // keep UX simple even on error
+              });
+          } else {
+            // 3) Guest: clear guest cart (no DB order is created)
+            this.http.post('/api/cart/guest/checkout', {}, { withCredentials: true }).subscribe({
+              next: () => this.finishPurchase(),
+              error: () => this.finishPurchase(),
+            });
+          }
+        };
+
+        // If logged in and user opted to save details, store profile first
         if (isLoggedIn && saveToProfile) {
           this.http
             .put(
@@ -109,11 +127,11 @@ export class PaymentFormComponent implements OnInit {
               { withCredentials: true }
             )
             .subscribe({
-              next: () => this.finishPurchase(),
-              error: () => this.finishPurchase(), // även om sparning misslyckas går köpet vidare (din UX)
+              next: afterProfileSave,
+              error: afterProfileSave,
             });
         } else {
-          this.finishPurchase();
+          afterProfileSave();
         }
       },
       error: () => this.finishPurchase(),
@@ -121,6 +139,7 @@ export class PaymentFormComponent implements OnInit {
   }
 
   private finishPurchase() {
+    this.isSubmitting = false;
     this.emitSuccessOnce();
     this.showModal = true;
   }

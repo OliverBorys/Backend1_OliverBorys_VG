@@ -110,6 +110,7 @@ CREATE TABLE IF NOT EXISTS orders (
   user_id INTEGER NOT NULL,
   status TEXT NOT NULL DEFAULT 'created',
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  payment_method TEXT,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );`
 ).run();
@@ -238,6 +239,15 @@ try {
   ).run();
 } catch (e) {
   console.error("order_items migration failed:", e);
+}
+
+// --- Migration: add payment_method to orders if missing ---
+try {
+  if (!columnExists("orders", "payment_method")) {
+    db.prepare(`ALTER TABLE orders ADD COLUMN payment_method TEXT`).run();
+  }
+} catch (e) {
+  console.error("orders migration failed:", e);
 }
 
 // --- Auth guards ---
@@ -990,9 +1000,15 @@ app.post("/api/orders/checkout", requireAuth, (req, res) => {
     return res.status(400).json({ error: "Cart is empty" });
   }
 
+  const { paymentMethod = null } = req.body || {};
   db.prepare(
-    "UPDATE orders SET status='created', created_at=datetime('now') WHERE id=?"
-  ).run(order.id);
+    `
+    UPDATE orders
+       SET status='created',
+           created_at=datetime('now'),
+           payment_method = COALESCE(?, payment_method)
+     WHERE id=?`
+  ).run(paymentMethod, order.id);
 
   res.json({ orderId: order.id, message: "Order created" });
 });
@@ -1078,6 +1094,128 @@ app.put("/api/account/password", requireAuth, async (req, res) => {
     req.session.user.id
   );
   res.json({ message: "Lösenord uppdaterat" });
+});
+
+//
+// --- Admin: Orders (list + delete) ---
+//
+
+// List orders with optional filters (?from=&to=&customer=)
+// NOTE: Only returns status='created' (carts excluded)
+app.get("/api/admin/orders", requireAdmin, (req, res) => {
+  const { from, to, customer } = req.query;
+
+  // Always restrict to created orders
+  const where = ["o.status = 'created'"];
+  const params = [];
+
+  if (from) {
+    where.push("date(o.created_at) >= date(?)");
+    params.push(String(from));
+  }
+  if (to) {
+    where.push("date(o.created_at) <= date(?)");
+    params.push(String(to));
+  }
+  if (customer && String(customer).trim()) {
+    where.push(`(
+      COALESCE(up.firstName,'') || ' ' || COALESCE(up.lastName,'') LIKE ?
+      OR COALESCE(up.email,'') LIKE ?
+      OR COALESCE(u.username,'') LIKE ?
+    )`);
+    const like = `%${String(customer).trim()}%`;
+    params.push(like, like, like);
+  }
+
+  const whereSql = `WHERE ${where.join(" AND ")}`;
+
+  // Base orders + user + profile
+  const orders = db
+    .prepare(
+      `
+      SELECT o.id, o.user_id, o.status, o.created_at, o.payment_method,
+             u.username,
+             up.firstName, up.lastName, up.email, up.mobilePhone,
+             up.address, up.city, up.postalCode
+        FROM orders o
+        JOIN users u ON u.id = o.user_id
+   LEFT JOIN user_profiles up ON up.user_id = o.user_id
+      ${whereSql}
+    ORDER BY datetime(o.created_at) DESC
+    `
+    )
+    .all(...params);
+
+  if (orders.length === 0) return res.json([]);
+
+  const ids = orders.map((o) => o.id);
+  const placeholders = ids.map(() => "?").join(",");
+  const items = db
+    .prepare(
+      `
+      SELECT oi.order_id,
+             oi.product_id,
+             oi.product_name,
+             oi.unit_price,
+             oi.quantity,
+             oi.line_total,
+             p.image
+        FROM order_items oi
+   LEFT JOIN products p ON p.id = oi.product_id
+       WHERE oi.order_id IN (${placeholders})
+    ORDER BY oi.id ASC
+    `
+    )
+    .all(...ids);
+
+  const byOrder = new Map();
+  for (const it of items) {
+    if (!byOrder.has(it.order_id)) byOrder.set(it.order_id, []);
+    byOrder.get(it.order_id).push({
+      productId: it.product_id,
+      productName: it.product_name,
+      unitPrice: it.unit_price,
+      quantity: it.quantity,
+      lineTotal: it.line_total,
+      image: it.image || null,
+    });
+  }
+
+  const result = orders.map((o) => {
+    const its = byOrder.get(o.id) || [];
+    const total = its.reduce((s, x) => s + (x.lineTotal ?? x.unitPrice * x.quantity ?? 0), 0);
+    return {
+      id: o.id,
+      userId: o.user_id,
+      status: o.status,
+      createdAt: o.created_at,
+      paymentMethod: o.payment_method || null,
+      customer: {
+        username: o.username,
+        firstName: o.firstName || "",
+        lastName: o.lastName || "",
+        email: o.email || "",
+        mobilePhone: o.mobilePhone || "",
+        address: o.address || "",
+        city: o.city || "",
+        postalCode: o.postalCode || "",
+      },
+      items: its,
+      total,
+    };
+  });
+
+  res.json(result);
+});
+
+// Delete a single order (items cascade)
+app.delete("/api/admin/orders/:id", requireAdmin, (req, res) => {
+  const id = Number(req.params.id);
+  if (Number.isNaN(id)) return res.status(400).json({ error: "Invalid id" });
+
+  const result = db.prepare(`DELETE FROM orders WHERE id=?`).run(id);
+  if (!result.changes) return res.status(404).json({ error: "Order not found" });
+  res.json({ message: "Order deleted", id });
 });
 
 // --- Starta server ---

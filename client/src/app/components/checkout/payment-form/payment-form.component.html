@@ -62,13 +62,18 @@
         <img [src]="paymentIcons[method]" [alt]="method + ' icon'" class="payment-icon" />
       </label>
     </div>
+    <small class="error" *ngIf="form.get('paymentMethod')?.touched && form.get('paymentMethod')?.invalid">
+      Please choose a payment method.
+    </small>
     <label style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem">
       <input type="checkbox" formControlName="saveToProfile" />
       <span>Spara uppgifterna på min profil</span>
     </label>
   </form>
   <div class="purchase-container">
-    <button (click)="handlePurchase()" class="purchase-button">Pay Purchase</button>
+    <button (click)="handlePurchase()" class="purchase-button" [disabled]="form.invalid || isSubmitting">
+      {{ isSubmitting ? 'Processing…' : 'Pay Purchase' }}
+    </button>
 
     <div class="modal-overlay" *ngIf="showModal">
       <div class="modal-box">
