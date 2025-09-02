@@ -22,6 +22,8 @@ export const authGuard: CanActivateFn = (route) => {
       }
       header.setLoggedIn(user);
 
+      header.rehydrateAfterAuthChange();
+
       if (requiredRole === 'admin' && user.role !== 'admin') {
         return to404;
       }

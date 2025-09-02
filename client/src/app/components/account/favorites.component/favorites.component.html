@@ -1,0 +1,16 @@
+<h2 class="favorites-title">Favorites</h2>
+
+<section class="shop-wrapper">
+  <div class="shop-controls">
+    <app-sort-dropdown
+      [sort]="sort"
+      (sortChange)="onSortChange($event)"
+    ></app-sort-dropdown>
+  </div>
+
+  <app-product-grid
+    [products]="filteredAndSortedProducts"
+    [query]="query"
+    [selectedCategory]="selectedCategory"
+  ></app-product-grid>
+</section>

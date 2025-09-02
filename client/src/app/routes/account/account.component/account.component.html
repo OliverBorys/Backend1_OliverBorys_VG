@@ -1,0 +1,21 @@
+<nav class="account-routes">
+  <a [routerLink]="['/account']"
+    >Account
+    <span
+      class="account-routes-underline"
+      routerLinkActive="active-link"
+      [routerLinkActiveOptions]="{ exact: true }"
+    ></span
+  ></a>
+  <a [routerLink]="['/account/your-orders']"
+    >Your orders <span class="account-routes-underline" routerLinkActive="active-link"></span
+  ></a>
+  <a [routerLink]="['/account/favorites']"
+    >Favorites <span class="account-routes-underline" routerLinkActive="active-link"></span
+  ></a>
+  <a [routerLink]="['/account/refound']"
+    >Refound <span class="account-routes-underline" routerLinkActive="active-link"></span
+  ></a>
+</nav>
+
+<router-outlet></router-outlet>

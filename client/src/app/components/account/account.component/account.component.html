@@ -1,0 +1,134 @@
+<h2 class="account-title">Your account</h2>
+
+<section class="account">
+  <div class="card">
+    <div class="card-header">
+      <h2>Contact details</h2>
+    </div>
+
+    <form [formGroup]="profileForm" class="grid">
+      <div class="row two">
+        <div class="field">
+          <label>First name</label>
+          <input formControlName="firstName" type="text" />
+        </div>
+        <div class="field">
+          <label>Last name</label>
+          <input formControlName="lastName" type="text" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Email</label>
+          <input formControlName="email" type="email" />
+          <small class="error" *ngIf="pf.email.touched && pf.email.invalid">
+            Invalid email
+          </small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Phonenumber</label>
+          <input formControlName="mobilePhone" type="tel" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Address</label>
+          <input formControlName="address" type="text" />
+        </div>
+      </div>
+
+      <div class="row two">
+        <div class="field">
+          <label>City</label>
+          <input formControlName="city" type="text" />
+        </div>
+        <div class="field">
+          <label>Postalcode</label>
+          <input formControlName="postalCode" type="text" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" (click)="saveProfile()" [disabled]="savingProfile">
+          {{ savingProfile ? 'Saving...' : 'Save' }}
+        </button>
+        <span class="hint" *ngIf="profileMessage">{{ profileMessage }}</span>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Change username</h2>
+      <p>At least 3 characters. Has to be uniqe.</p>
+    </div>
+
+    <form [formGroup]="usernameForm" class="grid">
+      <div class="row">
+        <div class="field">
+          <label>New username</label>
+          <input formControlName="username" type="text" />
+          <small class="error" *ngIf="uf.username.touched && uf.username.invalid">
+            At least 3 characters
+          </small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" (click)="updateUsername()" [disabled]="savingUsername">
+          {{ savingUsername ? 'Saving...' : 'Update username' }}
+        </button>
+        <span class="hint" *ngIf="usernameMessage">{{ usernameMessage }}</span>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Change password</h2>
+      <p>At least 6 characters.</p>
+    </div>
+
+    <form [formGroup]="passwordForm" class="grid">
+      <div class="row">
+        <div class="field">
+          <label>Current password</label>
+          <input formControlName="currentPassword" type="password" />
+          <small class="error" *ngIf="pwf.currentPassword.touched && pwf.currentPassword.invalid">
+            Required
+          </small>
+        </div>
+      </div>
+
+      <div class="row two">
+        <div class="field">
+          <label>New password</label>
+          <input formControlName="newPassword" type="password" />
+          <small class="error" *ngIf="pwf.newPassword.touched && pwf.newPassword.invalid">
+            At least 6 characters
+          </small>
+        </div>
+        <div class="field">
+          <label>Comfirm new password</label>
+          <input formControlName="confirmNewPassword" type="password" />
+          <small class="error"
+                 *ngIf="passwordForm.errors?.['mismatch'] && pwf.confirmNewPassword.touched">
+            Password does not match
+          </small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" (click)="updatePassword()" [disabled]="savingPassword">
+          {{ savingPassword ? 'Saving...' : 'Update password' }}
+        </button>
+        <span class="hint" *ngIf="passwordMessage">{{ passwordMessage }}</span>
+      </div>
+    </form>
+  </div>
+</section>

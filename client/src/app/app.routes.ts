@@ -9,7 +9,11 @@ import { CheckoutComponent } from './routes/checkout/checkout.component';
 
 import { NotFoundComponent } from './routes/not-found/not-found.component';
 
-import { AccountComponent } from './components/account/account.component';
+import { accountComponent } from './routes/account/account.component/account.component';
+import { AccountComponent } from './components/account/account.component/account.component';
+import { FavoritesComponent } from './components/account/favorites.component/favorites.component';
+import { YourOrdersComponent } from './components/account/your-orders.component/your-orders.component';
+import { RefoundComponent } from './components/account/refound.component/refound.component';
 
 import { AdminComponent } from './routes/admin/admin.component/admin.component';
 import { DashboardComponent } from './components/admin/dashboard.component/dashboard.component';
@@ -29,9 +33,16 @@ export const routes: Routes = [
   { path: 'checkout', component: CheckoutComponent },
   {
     path: 'account',
-    component: AccountComponent,
+    component: accountComponent,
     canActivate: [authGuard],
-    data: { role: 'customer' }
+    canActivateChild: [authGuard],
+    data: { role: 'customer' },
+    children: [
+      { path: '', component: AccountComponent },
+      { path: 'your-orders', component: YourOrdersComponent },
+      { path: 'favorites',  component: FavoritesComponent },
+      { path: 'refound', component: RefoundComponent },
+    ],
   },
 
   {
