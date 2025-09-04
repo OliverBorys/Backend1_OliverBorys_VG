@@ -3,7 +3,7 @@
 <div class="dashboard-grid">
   <div class="stat-card">
     <h3>Total Revenue</h3>
-    <p>$ {{ totalRevenue.toFixed(2) }}</p>
+    <p>$ {{ totalRevenue | number:'1.2-2' }}</p>
   </div>
   <div class="stat-card">
     <h3>Total Products Sold</h3>
