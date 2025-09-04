@@ -4,7 +4,6 @@ import { CommonModule } from '@angular/common';
 import { Category } from '../../../models/category.model';
 import { FullProduct } from '../../../models/full-product.model';
 
-
 @Component({
   selector: 'app-product-form',
   standalone: true,
@@ -26,7 +25,10 @@ export class ProductFormComponent implements OnInit {
     const isTrendingValue = this.product?.isTrending === 'yes' ? true : false;
 
     this.form = this.fb.group({
-      productName: [this.product?.productName || '', Validators.required],
+      productName: [
+        this.product?.productName || '',
+        [Validators.required, Validators.maxLength(30)],
+      ],
       price: [this.product?.price || 0, [Validators.required, Validators.min(0)]],
       image: [this.product?.image || '', Validators.required],
       secondaryImage1: [this.product?.secondaryImage1 || ''],
