@@ -10,7 +10,7 @@
       <div class="product-details">
         <h3>{{ item.productName }}</h3>
         <p class="brand">{{ item.brand }}</p>
-        <p class="price">${{ item.price }}</p>
+        <p class="price">{{ item.price| currency:'USD':'symbol':'1.2-2' }}</p>
       </div>
     </div>
 
@@ -32,5 +32,5 @@
     </div>
   </div>
 
-  <div class="total-box">Total: ${{ total }}</div>
+  <div class="total-box">{{ total | currency:'USD':'symbol':'1.2-2' }}</div>
 </section>

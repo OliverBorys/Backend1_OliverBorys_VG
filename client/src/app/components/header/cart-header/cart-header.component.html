@@ -24,7 +24,7 @@
           <div class="product-info">
             <h3 class="product-name">{{ item.productName }}</h3>
             <p class="product-brand">{{ item.brand }}</p>
-            <p>${{ item.price }}</p>
+            <p>{{ item.price| currency:'USD':'symbol':'1.2-2' }}</p>
           </div>
         </a>
 
@@ -50,7 +50,7 @@
     </div>
 
     <div class="cart-footer">
-      <div class="cart-total">Total: ${{ total }}</div>
+      <div class="cart-total">{{ total | currency:'USD':'symbol':'1.2-2' }}</div>
       <div class="checkout-btn">
         <a
           [routerLink]="['/checkout']"

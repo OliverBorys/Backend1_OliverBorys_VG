@@ -9,14 +9,14 @@ import {
 import { CartItem } from '../../../models/cart-item.model';
 import { HeaderState } from '../../../models/header-state.model';
 import { HeaderService } from '../header.service';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cart-header',
   standalone: true,
-  imports: [NgIf, NgFor, RouterModule],
+  imports: [NgIf, NgFor, RouterModule, CommonModule],
   templateUrl: './cart-header.component.html',
   styleUrls: ['./cart-header.component.css'],
 })
