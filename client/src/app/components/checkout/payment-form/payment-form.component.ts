@@ -47,7 +47,7 @@ export class PaymentFormComponent implements OnInit {
     this.prefillForLoggedInUser();
   }
 
-private prefillForLoggedInUser(): void {
+  private prefillForLoggedInUser(): void {
     this.http.get<{ user: any }>('/api/auth/me', { withCredentials: true }).subscribe({
       next: (res) => {
         if (res?.user) this.loadProfile();
@@ -91,34 +91,42 @@ private prefillForLoggedInUser(): void {
       saveToProfile,
     } = this.form.value;
 
-    // 1) Check login status
+    const payload = {
+      paymentMethod,
+      firstName,
+      lastName,
+      email,
+      mobilePhone,
+      address,
+      city,
+      postalCode,
+    };
+
+    // Kolla om inloggad
     this.http.get<{ user: any }>('/api/auth/me', { withCredentials: true }).subscribe({
       next: (me) => {
         const isLoggedIn = !!me?.user;
 
         const afterProfileSave = () => {
           if (isLoggedIn) {
-            // 2) Logged in: finalize order and store payment method
             this.http
               .post(
                 '/api/orders/checkout',
-                { paymentMethod: this.form.controls['paymentMethod'].value }, // <— THIS populates orders.payment_method
+                { paymentMethod: this.form.controls['paymentMethod'].value },
                 { withCredentials: true }
               )
               .subscribe({
                 next: () => this.finishPurchase(),
-                error: () => this.finishPurchase(), // keep UX simple even on error
+                error: () => this.finishPurchase(),
               });
           } else {
-            // 3) Guest: clear guest cart (no DB order is created)
-            this.http.post('/api/cart/guest/checkout', {}, { withCredentials: true }).subscribe({
+            this.http.post('/api/cart/guest/checkout', payload, { withCredentials: true }).subscribe({
               next: () => this.finishPurchase(),
               error: () => this.finishPurchase(),
             });
           }
         };
 
-        // If logged in and user opted to save details, store profile first
         if (isLoggedIn && saveToProfile) {
           this.http
             .put(

@@ -12,9 +12,6 @@ import { Router } from '@angular/router';
   styleUrl: './checkout.component.css',
 })
 export class CheckoutComponent {
-  processing = false;
-  error?: string;
-
   constructor(private titleService: Title, private header: HeaderService, private router: Router) {}
 
   ngOnInit(): void {
@@ -22,27 +19,8 @@ export class CheckoutComponent {
   }
 
   async handlePaymentSuccess() {
-    try {
-      this.processing = true;
-
-      if (this.header.isLoggedIn) {
-        await this.header.checkout();
-      } else {
-        await this.header.checkoutGuest();
-      }
-
-      this.header.closeCart();
-      await this.header.rehydrateAfterAuthChange();
-    } catch (e: any) {
-      if (e?.status === 401) {
-        this.error = 'Du måste vara inloggad för att slutföra köpet.';
-        this.router.navigate(['/login'], { queryParams: { returnUrl: '/checkout' } });
-      } else {
-        this.error = e?.error?.error || e?.error?.message || 'Ett fel uppstod vid checkout.';
-      }
-    } finally {
-      this.processing = false;
-    }
+    this.header.closeCart();
+    this.header.notifyCartChanged();
   }
 
   handleBackFromModal() {

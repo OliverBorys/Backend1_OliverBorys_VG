@@ -129,16 +129,6 @@ export class HeaderService {
     return this.getCurrentState().isLoggedIn;
   }
 
-  /** Guest checkout: töm session-cart efter betalning */
-  async checkoutGuest(): Promise<{ message: string }> {
-    const res = await firstValueFrom(
-      this.http.post<{ message: string }>('/api/cart/guest/checkout', {}, { withCredentials: true })
-    );
-    // spegla tom cart lokalt
-    this.cartSubject.next({ items: [], total: 0 });
-    return res;
-  }
-
   notifyCartChanged(): void {
     this.refreshCart().catch(() => {});
   }

@@ -103,22 +103,30 @@ CREATE TABLE IF NOT EXISTS favorites (
 );`
 ).run();
 
+//
+// NOTE: We will (re)build "orders" below if snapshot columns are missing.
+// This initial create is only for fresh DBs.
+//
 db.prepare(
   `
 CREATE TABLE IF NOT EXISTS orders (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
+  user_id INTEGER,                            -- nullable (guest orders = NULL)
   status TEXT NOT NULL DEFAULT 'created',
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   payment_method TEXT,
+  -- buyer snapshot fields (nullable)
+  buyer_firstName   TEXT,
+  buyer_lastName    TEXT,
+  buyer_email       TEXT,
+  buyer_mobilePhone TEXT,
+  buyer_address     TEXT,
+  buyer_city        TEXT,
+  buyer_postalCode  TEXT,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );`
 ).run();
 
-/**
- * OBS: order_items har nu nya kolumner (product_name, unit_price, line_total).
- * Tabellen skapas med rätt schema för nya DB:er, och vi kör en migration under för befintliga DB:er.
- */
 db.prepare(
   `
 CREATE TABLE IF NOT EXISTS order_items (
@@ -204,12 +212,82 @@ if (catCount === 0) {
   tx(cats);
 }
 
-// --- Migration för befintliga DB:er: lägg till nya kolumner om de saknas och initiera värden ---
+// --- Migration helpers ---
 function columnExists(table, col) {
   const rows = db.prepare(`PRAGMA table_info(${table})`).all();
   return rows.some((r) => r.name === col);
 }
 
+// Rebuild "orders" table if snapshot columns are missing OR user_id was NOT NULL
+(function migrateOrdersTableIfNeeded() {
+  const hasBuyer = columnExists("orders", "buyer_firstName");
+  if (hasBuyer) {
+    // still ensure indexes
+    db.prepare(
+      `CREATE INDEX IF NOT EXISTS idx_orders_status_created_at ON orders(status, created_at);`
+    ).run();
+    db.prepare(
+      `CREATE INDEX IF NOT EXISTS idx_orders_user_id_status ON orders(user_id, status);`
+    ).run();
+    return;
+  }
+
+  console.log("Migrating orders table to add buyer snapshot columns & allow NULL user_id...");
+
+  // Temporarily disable FKs to allow table rebuild
+  db.pragma("foreign_keys = OFF");
+  try {
+    db.prepare(
+      `
+      CREATE TABLE IF NOT EXISTS orders_new (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,                            -- now nullable
+        status TEXT NOT NULL DEFAULT 'created',
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        payment_method TEXT,
+        buyer_firstName   TEXT,
+        buyer_lastName    TEXT,
+        buyer_email       TEXT,
+        buyer_mobilePhone TEXT,
+        buyer_address     TEXT,
+        buyer_city        TEXT,
+        buyer_postalCode  TEXT,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      );
+      `
+    ).run();
+
+    // Copy existing data (columns that exist)
+    const hasPayment = columnExists("orders", "payment_method");
+    const colsOld = hasPayment
+      ? "id, user_id, status, created_at, payment_method"
+      : "id, user_id, status, created_at, NULL AS payment_method";
+
+    db.prepare(
+      `
+      INSERT INTO orders_new (id, user_id, status, created_at, payment_method)
+      SELECT ${colsOld} FROM orders;
+      `
+    ).run();
+
+    db.prepare(`DROP TABLE orders;`).run();
+    db.prepare(`ALTER TABLE orders_new RENAME TO orders;`).run();
+
+    // Indexes
+    db.prepare(
+      `CREATE INDEX IF NOT EXISTS idx_orders_status_created_at ON orders(status, created_at);`
+    ).run();
+    db.prepare(
+      `CREATE INDEX IF NOT EXISTS idx_orders_user_id_status ON orders(user_id, status);`
+    ).run();
+
+    console.log("Orders table migration done.");
+  } finally {
+    db.pragma("foreign_keys = ON");
+  }
+})();
+
+// --- Migration for order_items new columns (idempotent) ---
 try {
   if (!columnExists("order_items", "product_name")) {
     db.prepare(`ALTER TABLE order_items ADD COLUMN product_name TEXT`).run();
@@ -227,7 +305,6 @@ try {
   `
   ).run();
 
-  // Initiera nullade fält baserat på befintliga data
   db.prepare(
     `
     UPDATE order_items AS oi
@@ -239,15 +316,6 @@ try {
   ).run();
 } catch (e) {
   console.error("order_items migration failed:", e);
-}
-
-// --- Migration: add payment_method to orders if missing ---
-try {
-  if (!columnExists("orders", "payment_method")) {
-    db.prepare(`ALTER TABLE orders ADD COLUMN payment_method TEXT`).run();
-  }
-} catch (e) {
-  console.error("orders migration failed:", e);
 }
 
 // --- Auth guards ---
@@ -887,18 +955,35 @@ app.post("/api/orders", requireAuth, (req, res) => {
   }
 });
 
+// Endast inloggads ordrar (status 'created')
 app.get("/api/orders", requireAuth, (req, res) => {
   const orders = db
     .prepare(
-      "SELECT * FROM orders WHERE user_id = ? ORDER BY datetime(created_at) DESC"
+      `
+      SELECT *
+      FROM orders
+      WHERE user_id = ? AND status='created'
+      ORDER BY datetime(created_at) DESC
+      `
     )
     .all(req.session.user.id);
+
   const itemsStmt = db.prepare(`
     SELECT oi.*, p.productName, p.image
     FROM order_items oi JOIN products p ON p.id = oi.product_id
     WHERE oi.order_id = ?
   `);
-  const result = orders.map((o) => ({ ...o, items: itemsStmt.all(o.id) }));
+
+  const result = orders.map((o) => {
+    const items = itemsStmt.all(o.id).map((it) => ({
+      ...it,
+      unit_price: it.unit_price ?? it.price_at_purchase,
+      line_total: it.line_total ?? (it.unit_price ?? it.price_at_purchase) * it.quantity,
+    }));
+    const total = items.reduce((s, x) => s + x.line_total, 0);
+    return { ...o, items, total };
+  });
+
   res.json(result);
 });
 
@@ -916,8 +1001,14 @@ app.get("/api/orders/:id", requireAuth, (req, res) => {
     WHERE oi.order_id = ?
   `
     )
-    .all(order.id);
-  res.json({ ...order, items });
+    .all(order.id)
+    .map((it) => ({
+      ...it,
+      unit_price: it.unit_price ?? it.price_at_purchase,
+      line_total: it.line_total ?? (it.unit_price ?? it.price_at_purchase) * it.quantity,
+    }));
+  const total = items.reduce((s, x) => s + x.line_total, 0);
+  res.json({ ...order, items, total });
 });
 
 // Hämta profil (returnerar tomma strängar om profilen saknas)
@@ -982,9 +1073,19 @@ app.put("/api/profile", requireAuth, (req, res) => {
   res.json({ message: "Profile saved" });
 });
 
-// --- Checkout: konvertera 'cart' -> 'created' ---
+// --- Checkout: konvertera 'cart' -> 'created' (inloggad) ---
 app.post("/api/orders/checkout", requireAuth, (req, res) => {
-  const { paymentMethod = null } = req.body || {};
+  const {
+    paymentMethod = null,
+    // optional buyer snapshot coming from client; if missing we will fallback to profile
+    firstName = null,
+    lastName = null,
+    email = null,
+    mobilePhone = null,
+    address = null,
+    city = null,
+    postalCode = null,
+  } = req.body || {};
 
   // 1) Försök hitta en öppen cart
   const cart = db
@@ -1016,34 +1117,143 @@ app.post("/api/orders/checkout", requireAuth, (req, res) => {
     return res.status(400).json({ error: "Cart is empty" });
   }
 
-  // 4) Konvertera cart -> created och spara betalmetod
+  // 4) Fyll snapshot (antingen från body eller profil)
+  const profile = db
+    .prepare(
+      `SELECT firstName, lastName, email, mobilePhone, address, city, postalCode
+       FROM user_profiles WHERE user_id=?`
+    )
+    .get(req.session.user.id) || {};
+
+  const snap = {
+    firstName: firstName ?? profile.firstName ?? null,
+    lastName: lastName ?? profile.lastName ?? null,
+    email: email ?? profile.email ?? null,
+    mobilePhone: mobilePhone ?? profile.mobilePhone ?? null,
+    address: address ?? profile.address ?? null,
+    city: city ?? profile.city ?? null,
+    postalCode: postalCode ?? profile.postalCode ?? null,
+  };
+
+  // 5) Konvertera cart -> created och spara betalmetod + snapshot
   db.prepare(`
     UPDATE orders
        SET status='created',
            created_at=datetime('now'),
-           payment_method = COALESCE(?, payment_method)
+           payment_method = COALESCE(?, payment_method),
+           buyer_firstName   = COALESCE(?, buyer_firstName),
+           buyer_lastName    = COALESCE(?, buyer_lastName),
+           buyer_email       = COALESCE(?, buyer_email),
+           buyer_mobilePhone = COALESCE(?, buyer_mobilePhone),
+           buyer_address     = COALESCE(?, buyer_address),
+           buyer_city        = COALESCE(?, buyer_city),
+           buyer_postalCode  = COALESCE(?, buyer_postalCode)
      WHERE id=?
-  `).run(paymentMethod, cart.id);
+  `).run(
+    paymentMethod,
+    snap.firstName,
+    snap.lastName,
+    snap.email,
+    snap.mobilePhone,
+    snap.address,
+    snap.city,
+    snap.postalCode,
+    cart.id
+  );
 
   res.json({ orderId: cart.id, message: "Order created" });
 });
 
-
+// --- Guest checkout: konvertera gäst-session till order ---
 app.post("/api/cart/guest/checkout", (req, res) => {
-  // Skydda ifall någon råkar vara inloggad
   if (req.session.user) {
     return res
       .status(400)
       .json({ error: "Already logged in; use /api/orders/checkout" });
   }
-  if (
-    !Array.isArray(req.session.guestCart) ||
-    req.session.guestCart.length === 0
-  ) {
-    return res.json({ message: "Guest cart already empty" });
+
+  ensureGuestCart(req);
+  const itemsInCart = req.session.guestCart || [];
+  if (!Array.isArray(itemsInCart) || itemsInCart.length === 0) {
+    return res.json({ message: "Guest cart is already empty" });
   }
-  req.session.guestCart = [];
-  res.json({ message: "Guest cart cleared" });
+
+  const {
+    paymentMethod = null,
+    firstName = null,
+    lastName = null,
+    email = null,
+    mobilePhone = null,
+    address = null,
+    city = null,
+    postalCode = null,
+  } = req.body || {};
+
+  try {
+    const tx = db.transaction((payload) => {
+      // 1) Skapa order (guest -> user_id = NULL)
+      const orderRes = db
+        .prepare(
+          `
+          INSERT INTO orders (
+            user_id, status, created_at, payment_method,
+            buyer_firstName, buyer_lastName, buyer_email, buyer_mobilePhone, buyer_address, buyer_city, buyer_postalCode
+          ) VALUES (
+            NULL, 'created', datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?
+          )
+        `
+        )
+        .run(
+          paymentMethod,
+          firstName,
+          lastName,
+          email,
+          mobilePhone,
+          address,
+          city,
+          postalCode
+        );
+      const orderId = orderRes.lastInsertRowid;
+
+      // 2) Lägg till orderrader från guestCart
+      const getProd = db.prepare(
+        "SELECT id, productName, price FROM products WHERE id=?"
+      );
+      const insertItem = db.prepare(
+        `
+        INSERT INTO order_items (order_id, product_id, quantity, price_at_purchase, unit_price, product_name, line_total)
+        VALUES (?,?,?,?,?,?,?)
+        `
+      );
+
+      for (const it of itemsInCart) {
+        const qty = Number(it.quantity);
+        if (!it.productId || Number.isNaN(qty) || qty <= 0)
+          throw new Error("Invalid orderline");
+        const p = getProd.get(it.productId);
+        if (!p) throw new Error(`Product ${it.productId} does not exist`);
+        insertItem.run(
+          orderId,
+          p.id,
+          qty,
+          p.price,
+          p.price,
+          p.productName,
+          p.price * qty
+        );
+      }
+
+      return orderId;
+    });
+
+    const orderId = tx({});
+    // 3) Töm gäst-varukorg
+    req.session.guestCart = [];
+    res.json({ orderId, message: "Order created (guest)" });
+  } catch (e) {
+    console.error("Guest checkout failed:", e);
+    res.status(400).json({ error: String(e.message || e) });
+  }
 });
 
 // Uppdatera användarnamn
@@ -1117,11 +1327,10 @@ app.put("/api/account/password", requireAuth, async (req, res) => {
 //
 
 // List orders with optional filters (?from=&to=&customer=)
-// NOTE: Only returns status='created' (carts excluded)
+// Only returns status='created' (carts excluded). Includes guests (user_id NULL).
 app.get("/api/admin/orders", requireAdmin, (req, res) => {
   const { from, to, customer } = req.query;
 
-  // Always restrict to created orders
   const where = ["o.status = 'created'"];
   const params = [];
 
@@ -1138,26 +1347,35 @@ app.get("/api/admin/orders", requireAdmin, (req, res) => {
       COALESCE(up.firstName,'') || ' ' || COALESCE(up.lastName,'') LIKE ?
       OR COALESCE(up.email,'') LIKE ?
       OR COALESCE(u.username,'') LIKE ?
+      OR COALESCE(o.buyer_firstName,'') || ' ' || COALESCE(o.buyer_lastName,'') LIKE ?
+      OR COALESCE(o.buyer_email,'') LIKE ?
     )`);
     const like = `%${String(customer).trim()}%`;
-    params.push(like, like, like);
+    params.push(like, like, like, like, like);
   }
 
   const whereSql = `WHERE ${where.join(" AND ")}`;
 
-  // Base orders + user + profile
+  // Base orders + user + profile; prefer snapshot if profile is null (guests)
   const orders = db
     .prepare(
       `
-      SELECT o.id, o.user_id, o.status, o.created_at, o.payment_method,
-             u.username,
-             up.firstName, up.lastName, up.email, up.mobilePhone,
-             up.address, up.city, up.postalCode
-        FROM orders o
-        JOIN users u ON u.id = o.user_id
-   LEFT JOIN user_profiles up ON up.user_id = o.user_id
+      SELECT
+        o.id, o.user_id, o.status, o.created_at, o.payment_method,
+        -- effective customer fields (profile OR snapshot)
+        COALESCE(up.firstName,  o.buyer_firstName)   AS firstName,
+        COALESCE(up.lastName,   o.buyer_lastName)    AS lastName,
+        COALESCE(up.email,      o.buyer_email)       AS email,
+        COALESCE(up.mobilePhone,o.buyer_mobilePhone) AS mobilePhone,
+        COALESCE(up.address,    o.buyer_address)     AS address,
+        COALESCE(up.city,       o.buyer_city)        AS city,
+        COALESCE(up.postalCode, o.buyer_postalCode)  AS postalCode,
+        u.username
+      FROM orders o
+      LEFT JOIN users u ON u.id = o.user_id
+      LEFT JOIN user_profiles up ON up.user_id = o.user_id
       ${whereSql}
-    ORDER BY datetime(o.created_at) DESC
+      ORDER BY datetime(o.created_at) DESC
     `
     )
     .all(...params);
@@ -1166,48 +1384,44 @@ app.get("/api/admin/orders", requireAdmin, (req, res) => {
 
   const ids = orders.map((o) => o.id);
   const placeholders = ids.map(() => "?").join(",");
-  const items = db
+  const rawItems = db
     .prepare(
       `
-      SELECT oi.order_id,
-             oi.product_id,
-             oi.product_name,
-             oi.unit_price,
-             oi.quantity,
-             oi.line_total,
-             p.image
-        FROM order_items oi
-   LEFT JOIN products p ON p.id = oi.product_id
-       WHERE oi.order_id IN (${placeholders})
-    ORDER BY oi.id ASC
+      SELECT oi.order_id, oi.product_id, oi.product_name, oi.unit_price, oi.quantity, oi.line_total, p.image
+      FROM order_items oi
+      LEFT JOIN products p ON p.id = oi.product_id
+      WHERE oi.order_id IN (${placeholders})
+      ORDER BY oi.id ASC
     `
     )
     .all(...ids);
 
   const byOrder = new Map();
-  for (const it of items) {
+  for (const it of rawItems) {
+    const unitPrice = it.unit_price ?? it.price_at_purchase;
+    const lineTotal = it.line_total ?? unitPrice * it.quantity;
     if (!byOrder.has(it.order_id)) byOrder.set(it.order_id, []);
     byOrder.get(it.order_id).push({
       productId: it.product_id,
       productName: it.product_name,
-      unitPrice: it.unit_price,
+      unitPrice,
       quantity: it.quantity,
-      lineTotal: it.line_total,
+      lineTotal,
       image: it.image || null,
     });
   }
 
   const result = orders.map((o) => {
     const its = byOrder.get(o.id) || [];
-    const total = its.reduce((s, x) => s + (x.lineTotal ?? x.unitPrice * x.quantity ?? 0), 0);
+    const total = its.reduce((s, x) => s + (x.lineTotal || 0), 0);
     return {
       id: o.id,
-      userId: o.user_id,
+      userId: o.user_id, // null = guest
       status: o.status,
       createdAt: o.created_at,
       paymentMethod: o.payment_method || null,
       customer: {
-        username: o.username,
+        username: o.username || null,
         firstName: o.firstName || "",
         lastName: o.lastName || "",
         email: o.email || "",
