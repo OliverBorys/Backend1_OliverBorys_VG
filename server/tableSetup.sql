@@ -14,7 +14,7 @@ CREATE TABLE products (
     secondaryImage3 TEXT,
     brand TEXT,
     productDescription TEXT,
-    isNew TEXT,
+    isTrending TEXT,
     categoryId INTEGER,  
     publishingDate TEXT DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (categoryId) REFERENCES categories(id) ON DELETE SET NULL
@@ -32,7 +32,7 @@ DROP TABLE IF EXISTS products;
 
 
 -- Exempel produkter
-INSERT INTO products (productName, price, image, secondaryImage1, secondaryImage2, secondaryImage3, brand, productDescription, isNew, categoryId, publishingDate) VALUES
+INSERT INTO products (productName, price, image, secondaryImage1, secondaryImage2, secondaryImage3, brand, productDescription, isTrending, categoryId, publishingDate) VALUES
 ('Nike Air Jordan 1', 199.99, 'https://example.com/jordan1-main.jpg', 'https://example.com/jordan1-side.jpg', 'https://example.com/jordan1-back.jpg', 'https://example.com/jordan1-box.jpg', 'Nike', 'Iconic basketball sneakers with premium leather', 'yes', 1, '2024-01-15'),
 ('Adidas Ultraboost 22', 179.99, 'https://example.com/ultraboost-main.jpg', 'https://example.com/ultraboost-side.jpg', 'https://example.com/ultraboost-top.jpg', 'https://example.com/ultraboost-box.jpg', 'Adidas', 'Ultra-responsive running shoes with Boost cushioning', 'yes', 1, '2024-02-01'),
 ('Balenciaga Triple S', 995.00, 'https://example.com/tripleS-main.jpg', 'https://example.com/tripleS-side.jpg', 'https://example.com/tripleS-back.jpg', 'https://example.com/tripleS-box.jpg', 'Balenciaga', 'High-fashion chunky sneakers', 'no', 1, '2024-03-10'),

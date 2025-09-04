@@ -25,8 +25,8 @@
         <th class="medium" (click)="setSort('price')">
           Price <span *ngIf="sortColumn === 'price'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
         </th>
-        <th class="medium" (click)="setSort('isNew')">
-          New In <span *ngIf="sortColumn === 'isNew'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        <th class="medium" (click)="setSort('isTrending')">
+          Trending <span *ngIf="sortColumn === 'isTrending'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
         </th>
         <th>Actions</th>
       </tr>
@@ -45,8 +45,8 @@
         <td class="small">{{ product.categoryName }}</td>
         <td class="medium">${{ product.price.toFixed(2) }}</td>
         <td class="medium">
-          <span [ngClass]="{ tag: true, new: product.isNew === 'yes' }">
-            {{ product.isNew === 'yes' ? 'Yes' : 'No' }}
+          <span [ngClass]="{ tag: true, new: product.isTrending === 'yes' }">
+            {{ product.isTrending === 'yes' ? 'Yes' : 'No' }}
           </span>
         </td>
         <td class="actions">

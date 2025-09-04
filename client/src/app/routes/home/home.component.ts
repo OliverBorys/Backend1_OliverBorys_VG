@@ -35,7 +35,7 @@ export class HomeComponent implements OnInit {
     this.http.get<GridProduct[]>('/api/products').subscribe(data => {
       this.products = data;
       this.trendingProducts = data
-        .filter(p => p.isNew?.toLowerCase() === 'yes')
+        .filter(p => p.isTrending?.toLowerCase() === 'yes')
         .sort(() => Math.random() - 0.5)
         .slice(0, 4);
     });

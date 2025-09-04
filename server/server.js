@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS products (
   secondaryImage3 TEXT,
   brand TEXT,
   productDescription TEXT,
-  isNew TEXT,
+  isTrending TEXT,
   categoryId INTEGER NOT NULL,
   publishingDate TEXT NOT NULL,
   FOREIGN KEY (categoryId) REFERENCES categories(id) ON DELETE RESTRICT
@@ -463,7 +463,7 @@ app.post("/api/products", requireAdmin, (req, res) => {
     secondaryImage3,
     brand,
     productDescription,
-    isNew,
+    isTrending,
     categoryId,
     publishingDate,
   } = req.body;
@@ -478,7 +478,7 @@ app.post("/api/products", requireAdmin, (req, res) => {
     const stmt = db.prepare(`
       INSERT INTO products (
         productName, price, image, secondaryImage1, secondaryImage2, secondaryImage3,
-        brand, productDescription, isNew, categoryId, publishingDate
+        brand, productDescription, isTrending, categoryId, publishingDate
       ) VALUES (?,?,?,?,?,?,?,?,?,?,?)
     `);
     const result = stmt.run(
@@ -490,7 +490,7 @@ app.post("/api/products", requireAdmin, (req, res) => {
       secondaryImage3,
       brand,
       productDescription,
-      isNew,
+      isTrending,
       categoryId,
       publishingDate
     );
@@ -512,7 +512,7 @@ app.put("/api/products/:id", requireAdmin, (req, res) => {
     secondaryImage3,
     brand,
     productDescription,
-    isNew,
+    isTrending,
     categoryId,
     publishingDate,
   } = req.body;
@@ -520,7 +520,7 @@ app.put("/api/products/:id", requireAdmin, (req, res) => {
   const stmt = db.prepare(`
     UPDATE products SET
       productName=?, price=?, image=?, secondaryImage1=?, secondaryImage2=?, secondaryImage3=?,
-      brand=?, productDescription=?, isNew=?, categoryId=?, publishingDate=?
+      brand=?, productDescription=?, isTrending=?, categoryId=?, publishingDate=?
     WHERE id = ?
   `);
   const result = stmt.run(
@@ -532,7 +532,7 @@ app.put("/api/products/:id", requireAdmin, (req, res) => {
     secondaryImage3,
     brand,
     productDescription,
-    isNew,
+    isTrending,
     categoryId,
     publishingDate,
     req.params.id
@@ -984,34 +984,50 @@ app.put("/api/profile", requireAuth, (req, res) => {
 
 // --- Checkout: konvertera 'cart' -> 'created' ---
 app.post("/api/orders/checkout", requireAuth, (req, res) => {
-  const order = db
+  const { paymentMethod = null } = req.body || {};
+
+  // 1) Försök hitta en öppen cart
+  const cart = db
     .prepare("SELECT id FROM orders WHERE user_id=? AND status='cart'")
     .get(req.session.user.id);
 
-  if (!order) {
+  if (!cart) {
+    // 2) Idempotent: om cart redan konverterats, returnera senaste skapade ordern
+    const recent = db
+      .prepare(`
+        SELECT id FROM orders
+        WHERE user_id=? AND status='created'
+        ORDER BY datetime(created_at) DESC
+        LIMIT 1
+      `)
+      .get(req.session.user.id);
+
+    if (recent) {
+      return res.json({ orderId: recent.id, message: "Order already created" });
+    }
     return res.status(400).json({ error: "No cart to checkout" });
   }
 
+  // 3) Säkerställ att cart har items
   const hasItems = db
     .prepare("SELECT COUNT(*) AS c FROM order_items WHERE order_id=?")
-    .get(order.id);
-
+    .get(cart.id);
   if (!hasItems.c) {
     return res.status(400).json({ error: "Cart is empty" });
   }
 
-  const { paymentMethod = null } = req.body || {};
-  db.prepare(
-    `
+  // 4) Konvertera cart -> created och spara betalmetod
+  db.prepare(`
     UPDATE orders
        SET status='created',
            created_at=datetime('now'),
            payment_method = COALESCE(?, payment_method)
-     WHERE id=?`
-  ).run(paymentMethod, order.id);
+     WHERE id=?
+  `).run(paymentMethod, cart.id);
 
-  res.json({ orderId: order.id, message: "Order created" });
+  res.json({ orderId: cart.id, message: "Order created" });
 });
+
 
 app.post("/api/cart/guest/checkout", (req, res) => {
   // Skydda ifall någon råkar vara inloggad

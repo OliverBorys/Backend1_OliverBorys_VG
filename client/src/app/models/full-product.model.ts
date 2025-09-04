@@ -5,7 +5,7 @@ export interface FullProduct extends Product {
   secondaryImage2?: string;
   secondaryImage3?: string;
   productDescription: string;
-  isNew: string;
+  isTrending: string;
   publishingDate: string;
   categoryName?: string;
 }

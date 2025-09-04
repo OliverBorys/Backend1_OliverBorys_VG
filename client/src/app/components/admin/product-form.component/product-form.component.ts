@@ -23,7 +23,7 @@ export class ProductFormComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    const isNewValue = this.product?.isNew === 'yes' ? true : false;
+    const isTrendingValue = this.product?.isTrending === 'yes' ? true : false;
 
     this.form = this.fb.group({
       productName: [this.product?.productName || '', Validators.required],
@@ -34,7 +34,7 @@ export class ProductFormComponent implements OnInit {
       secondaryImage3: [this.product?.secondaryImage3 || ''],
       brand: [this.product?.brand || '', Validators.required],
       productDescription: [this.product?.productDescription || '', Validators.required],
-      isNew: [isNewValue, Validators.required],
+      isTrending: [isTrendingValue, Validators.required],
       categoryId: [this.product?.categoryId || '', Validators.required],
       publishingDate: [this.product?.publishingDate || '', Validators.required],
     });
@@ -47,7 +47,7 @@ export class ProductFormComponent implements OnInit {
         id: this.product?.id,
         price: Number(this.form.value.price),
         categoryId: Number(this.form.value.categoryId),
-        isNew: this.form.value.isNew ? 'yes' : 'no',
+        isTrending: this.form.value.isTrending ? 'yes' : 'no',
       };
       console.log('Submitting Product:', productData);
       this.save.emit(productData);

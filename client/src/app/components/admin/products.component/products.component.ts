@@ -51,7 +51,7 @@ export class ProductsComponent implements OnInit {
           ...p,
           categoryName:
             categories.find((c) => c.id === p.categoryId)?.categoryName || 'Unknown',
-          isNew: p.isNew,
+          isTrending: p.isTrending,
         }));
         this.loading = false;
       })
@@ -88,7 +88,7 @@ export class ProductsComponent implements OnInit {
       if (aValue === undefined || aValue === null) return bValue === undefined || bValue === null ? 0 : -1 * dir;
       if (bValue === undefined || bValue === null) return 1 * dir;
 
-      if (this.sortColumn === 'isNew') {
+      if (this.sortColumn === 'isTrending') {
         aValue = aValue === 'yes' ? 1 : 0;
         bValue = bValue === 'yes' ? 1 : 0;
       }
