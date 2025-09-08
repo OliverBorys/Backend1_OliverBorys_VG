@@ -625,6 +625,20 @@ app.get("/api/categories", requireAdmin, (req, res) => {
   res.json(rows);
 });
 
+app.get("/api/categories/public", (req, res) => {
+  const rows = db.prepare(`
+    SELECT
+      id,
+      categoryName,
+      image_url AS imageUrl
+    FROM categories
+    WHERE LOWER(categoryName) <> 'uncategorized'
+    ORDER BY id ASC
+  `).all();
+
+  res.json(rows);
+});
+
 // Skapa kategori (med ev. bild)
 app.post("/api/categories", requireAdmin, upload.single("image"), (req, res) => {
   const name = String(req.body?.categoryName || "").trim();

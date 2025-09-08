@@ -1,18 +1,18 @@
 <section class="category-grid">
   <div class="category-grid-wrapper">
-    <a
-      *ngFor="let category of categories"
+<a
+      *ngFor="let card of cards"
       class="category-item"
       [routerLink]="['/shop']"
-      [queryParams]="{ category: category.name.toLowerCase() }"
+      [queryParams]="{ category: card.isStatic ? 'new' : card.name.toLowerCase() }"
     >
       <img
-        [src]="category.img"
-        [alt]="category.name"
+        [src]="card.img"
+        [alt]="card.name"
         class="category-image"
       />
       <div class="category-overlay">
-        {{ category.name }}
+        {{ card.name }}
       </div>
     </a>
   </div>
