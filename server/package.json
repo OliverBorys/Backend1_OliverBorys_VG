@@ -2,8 +2,8 @@
   "name": "server",
   "description": "Backend API for products, categories and users using Express and SQLite.",
   "scripts": {
-    "start": "node server",
-    "dev": "nodemon ./src/server.js"
+    "start": "node ./src/index.js",
+    "dev": "nodemon ./src/index.js"
   },
   "type": "module",
   "dependencies": {

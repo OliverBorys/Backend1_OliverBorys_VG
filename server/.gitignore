@@ -12,3 +12,4 @@ uploads/**
 /client/dist
 /client/.angular
 .DS_Store
+.txt
