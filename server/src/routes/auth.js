@@ -41,17 +41,14 @@ router.post('/api/auth/login', async (req, res) => {
   }
   if (!ok) return res.status(401).json({ error: 'Wrong username or password' });
 
-  // Spara gästdata innan regenerate
   const guestFavs = Array.isArray(req.session.guestFavorites) ? [...req.session.guestFavorites] : [];
   const guestCart = Array.isArray(req.session.guestCart) ? [...req.session.guestCart] : [];
 
-  // Gör callbacken async
   req.session.regenerate(async (err) => {
     if (err) return res.status(500).json({ error: 'Session error during login' });
 
     req.session.user = { id: user.id, username: user.username, role: user.role };
 
-    // Migrera gäst-favoriter -> DB
     if (guestFavs.length > 0) {
       const insertFav = db.prepare(`INSERT OR IGNORE INTO favorites (user_id, product_id) VALUES (?,?)`);
       const tx = db.transaction((uid, ids) => { for (const pid of ids) insertFav.run(uid, pid); });
@@ -59,7 +56,6 @@ router.post('/api/auth/login', async (req, res) => {
     }
     req.session.guestFavorites = [];
 
-    // Migrera gäst-cart -> DB-cart
     if (guestCart.length > 0) {
       const orderId = getOrCreateCartOrderId(user.id);
       const getProd = db.prepare(`SELECT id, productName, price FROM products WHERE id=?`);
