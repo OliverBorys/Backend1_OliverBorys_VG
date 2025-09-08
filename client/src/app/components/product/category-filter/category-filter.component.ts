@@ -8,12 +8,18 @@ import { Category } from '../../../models/category.model';
   selector: 'app-category-filter',
   templateUrl: './category-filter.component.html',
   styleUrls: ['./category-filter.component.css'],
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule],
 })
 export class CategoryFilterComponent {
   @Input() categories: Category[] = [];
   @Input() selectedCategory: string = '';
   @Output() categoryChange = new EventEmitter<string>();
+
+  get visibleCategories() {
+    return (this.categories || []).filter(
+      (c) => (c.categoryName || '').trim().toLowerCase() !== 'uncategorized'
+    );
+  }
 
   onCategoryChange(value: string): void {
     this.categoryChange.emit(value);

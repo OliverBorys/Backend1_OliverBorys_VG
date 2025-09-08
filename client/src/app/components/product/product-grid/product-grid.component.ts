@@ -42,9 +42,20 @@ export class ProductGridComponent implements OnInit, OnDestroy {
   get visibleProducts(): GridProduct[] {
     const now = new Date();
 
-    const available = this.products.filter(p => new Date(p.publishingDate) <= now);
+    const available = this.products.filter(p => {
+      const pub = new Date((p as any).publishingDate);
+      return !isNaN(pub.getTime()) && pub <= now;
+    });
 
-    return filterProducts(available, this.query, this.selectedCategory, this.likedIds);
+    const withoutUncategorized = available.filter(p => {
+      const catName =
+        ((p as any).categoryName ??
+         (p as any).category?.categoryName ??
+         '').toString().trim().toLowerCase();
+      return catName !== 'uncategorized';
+    });
+
+    return filterProducts(withoutUncategorized, this.query, this.selectedCategory, this.likedIds);
   }
 
   onLikeToggle(): void {
