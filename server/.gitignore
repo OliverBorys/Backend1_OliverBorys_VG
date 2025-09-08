@@ -1,9 +1,16 @@
-/node_modules
-
-# SQLite WAL/SHM (transaktionsfiler)
-**/*.db-wal
-**/*.db-shm
-
-# Session-databas
+# DB
+/server/db/*.db
+/server/db/*.db-shm
+/server/db/*.db-wal
 db/sessions.db
-.txt
+
+# Uploads (lagrade bilder)
+server/uploads/**
+!server/uploads/.gitkeep   # behåll mappen tom i git
+
+# Miljö & byggen
+.env
+/node_modules
+/client/dist
+/client/.angular
+.DS_Store
