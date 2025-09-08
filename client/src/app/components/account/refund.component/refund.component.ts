@@ -11,7 +11,7 @@ import { Title } from '@angular/platform-browser';
   templateUrl: './refund.component.html',
   styleUrls: ['./refund.component.css'],
 })
-export class RefundsComponent {
+export class RefundComponent {
   constructor(
     private titleService: Title
   ) {}
