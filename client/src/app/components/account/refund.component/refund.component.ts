@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
@@ -7,7 +7,7 @@ import { Title } from '@angular/platform-browser';
 @Component({
   standalone: true,
   selector: 'app-refund.component',
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   templateUrl: './refund.component.html',
   styleUrls: ['./refund.component.css'],
 })

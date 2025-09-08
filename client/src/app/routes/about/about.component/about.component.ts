@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { AboutSectionComponent } from '../about-section.component/about-section.component';
 import { Title } from '@angular/platform-browser';
 
@@ -8,7 +8,7 @@ import { Title } from '@angular/platform-browser';
   selector: 'app-about',
   templateUrl: './about.component.html',
   styleUrls: ['./about.component.css'],
-  imports: [CommonModule, AboutSectionComponent ]
+  imports: [AboutSectionComponent]
 })
 export class AboutComponent implements OnInit {
   constructor(

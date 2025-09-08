@@ -3,10 +3,10 @@
     (mousedown)="toggleSidebar($event)"
     class="sidebar-button"
     [class.open]="state.isSidebarOpen"
-  >
-  <span [class.dark]="isHeaderWhite"></span>
-  <span [class.dark]="isHeaderWhite"></span>
-  <span [class.dark]="isHeaderWhite"></span>
+    >
+    <span [class.dark]="isHeaderWhite"></span>
+    <span [class.dark]="isHeaderWhite"></span>
+    <span [class.dark]="isHeaderWhite"></span>
   </button>
 
   <nav class="nav-links">
@@ -22,40 +22,48 @@
     <a [routerLink]="['/contact']" class="nav-link" [class.dark]="isHeaderWhite"
       >Contact <span class="header-underline"></span
     ></a>
-     <a *ngIf="state?.user?.role === 'admin'"
-     [routerLink]="['/admin']"
-     class="nav-link"
-     [class.dark]="isHeaderWhite">
-    Admin <span class="header-underline"></span>
-  </a>
+    @if (state.user?.role === 'admin') {
+      <a
+        [routerLink]="['/admin']"
+        class="nav-link"
+        [class.dark]="isHeaderWhite">
+        Admin <span class="header-underline"></span>
+      </a>
+    }
 
-  <a *ngIf="state?.user"
-     [routerLink]="['/account']"
-     class="nav-link"
-     [class.dark]="isHeaderWhite">
-    Account <span class="header-underline"></span>
-  </a>
+    @if (state.user) {
+      <a
+        [routerLink]="['/account']"
+        class="nav-link"
+        [class.dark]="isHeaderWhite">
+        Account <span class="header-underline"></span>
+      </a>
+    }
   </nav>
 
   <nav
     class="sidebar-nav"
     [class.sidebar-open]="state.isSidebarOpen"
     [attr.aria-hidden]="!state.isSidebarOpen"
-  >
-  <form #sidebarForm="ngForm" (ngSubmit)="handleSearchSubmit(sidebarForm)" class="search">
-    <input
-      type="text"
-      name="q"
-      ngModel
-      placeholder="Search..."
-      class="search-input"
-    />
-  </form>
-    <a [routerLink]="['/']" (click)="closeSidebar()">Home</a>
-    <a [routerLink]="['/shop']" (click)="closeSidebar()">Shop</a>
-    <a [routerLink]="['/about']" (click)="closeSidebar()">About</a>
-    <a [routerLink]="['/contact']" (click)="closeSidebar()">Contact</a>
-  <a *ngIf="state?.user?.role === 'admin'" [routerLink]="['/admin']" (click)="closeSidebar()">Admin</a>
-  <a *ngIf="state?.user" [routerLink]="['/account']" (click)="closeSidebar()">Account</a>
-  </nav>
-</section>
+    >
+    <form #sidebarForm="ngForm" (ngSubmit)="handleSearchSubmit(sidebarForm)" class="search">
+      <input
+        type="text"
+        name="q"
+        ngModel
+        placeholder="Search..."
+        class="search-input"
+        />
+      </form>
+      <a [routerLink]="['/']" (click)="closeSidebar()">Home</a>
+      <a [routerLink]="['/shop']" (click)="closeSidebar()">Shop</a>
+      <a [routerLink]="['/about']" (click)="closeSidebar()">About</a>
+      <a [routerLink]="['/contact']" (click)="closeSidebar()">Contact</a>
+      @if (state.user?.role === 'admin') {
+        <a [routerLink]="['/admin']" (click)="closeSidebar()">Admin</a>
+      }
+      @if (state.user) {
+        <a [routerLink]="['/account']" (click)="closeSidebar()">Account</a>
+      }
+    </nav>
+  </section>

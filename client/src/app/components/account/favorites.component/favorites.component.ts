@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { HttpClient } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
 import { SortDropdownComponent } from '../../product/sort-dropdown/sort-dropdown.component';
@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
   selector: 'app-favorites.component',
   templateUrl: './favorites.component.html',
   styleUrls: ['./favorites.component.css'],
-  imports: [CommonModule, SortDropdownComponent, ProductGridComponent],
+  imports: [SortDropdownComponent, ProductGridComponent],
 })
 export class FavoritesComponent implements OnInit, OnDestroy {
   pageTitle = 'Favorites';

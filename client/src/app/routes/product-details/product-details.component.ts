@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { HttpClient } from '@angular/common/http';
 import { ProductImageComponent } from '../../components/product-details/product-image/product-image.component';
 import { ProductInfoComponent } from '../../components/product-details/product-info/product-info.component';
@@ -14,13 +14,12 @@ import { GridProduct } from '../../models/grid-product.model';
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css'],
   imports: [
-    CommonModule,
     RouterModule,
     ProductImageComponent,
     ProductInfoComponent,
     RelatedProductsCarouselComponent,
     MissingProductComponent
-  ]
+]
 })
 export class ProductDetailsComponent implements OnInit {
   product!: GridProduct;

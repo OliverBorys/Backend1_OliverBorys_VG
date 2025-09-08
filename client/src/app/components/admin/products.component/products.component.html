@@ -6,39 +6,50 @@
       class="search-input"
       placeholder="Search product..."
       [(ngModel)]="searchQuery"
-    />
-    <button class="add-btn" (click)="openAddModal()">+ Add Product</button>
-  </div>
+      />
+      <button class="add-btn" (click)="openAddModal()">+ Add Product</button>
+    </div>
 
-  <table class="product-table">
-    <thead>
-      <tr>
-        <th class="small" (click)="setSort('id')">
-          ID <span *ngIf="sortColumn === 'id'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+    <table class="product-table">
+      <thead>
+        <tr>
+          <th class="small" (click)="setSort('id')">
+            ID @if (sortColumn === 'id') {
+            <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+          }
         </th>
         <th (click)="setSort('productName')">
-          Product <span *ngIf="sortColumn === 'productName'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
-        </th>
-        <th class="small" (click)="setSort('categoryName')">
-          Category <span *ngIf="sortColumn === 'categoryName'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
-        </th>
-        <th class="medium" (click)="setSort('price')">
-          Price <span *ngIf="sortColumn === 'price'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
-        </th>
-        <th class="medium" (click)="setSort('isTrending')">
-          Trending <span *ngIf="sortColumn === 'isTrending'">{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
-        </th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let product of filteredProducts">
-        <td class="small">{{ product.id }}</td>
-        <td class="product-cell">
-          <img
-            [src]="product.image"
-            alt="{{ product.productName }}"
-            class="product-thumbnail"
+          Product @if (sortColumn === 'productName') {
+          <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+        }
+      </th>
+      <th class="small" (click)="setSort('categoryName')">
+        Category @if (sortColumn === 'categoryName') {
+        <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+      }
+    </th>
+    <th class="medium" (click)="setSort('price')">
+      Price @if (sortColumn === 'price') {
+      <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+    }
+  </th>
+  <th class="medium" (click)="setSort('isTrending')">
+    Trending @if (sortColumn === 'isTrending') {
+    <span>{{ sortDirection === 'asc' ? '▲' : '▼' }}</span>
+  }
+</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody>
+  @for (product of filteredProducts; track product) {
+    <tr>
+      <td class="small">{{ product.id }}</td>
+      <td class="product-cell">
+        <img
+          [src]="product.image"
+          alt="{{ product.productName }}"
+          class="product-thumbnail"
           />
           <span>{{ product.productName }}</span>
         </td>
@@ -54,21 +65,24 @@
           <button class="delete-btn" (click)="openDeleteModal(product)">Delete</button>
         </td>
       </tr>
-    </tbody>
-  </table>
+    }
+  </tbody>
+</table>
 </section>
 
-<app-product-form
-  *ngIf="showModal"
-  [product]="selectedProduct"
-  [categories]="categories"
-  (save)="handleSave($event)"
-  (close)="closeModal()"
-></app-product-form>
+@if (showModal) {
+  <app-product-form
+    [product]="selectedProduct"
+    [categories]="categories"
+    (save)="handleSave($event)"
+    (close)="closeModal()"
+  ></app-product-form>
+}
 
-<app-confirm-delete-modal
-  *ngIf="showDeleteModal"
-  [itemName]="productToDelete?.productName || ''"
-  (confirm)="confirmDelete()"
-  (close)="closeDeleteModal()"
-></app-confirm-delete-modal>
+@if (showDeleteModal) {
+  <app-confirm-delete-modal
+    [itemName]="productToDelete?.productName || ''"
+    (confirm)="confirmDelete()"
+    (close)="closeDeleteModal()"
+  ></app-confirm-delete-modal>
+}

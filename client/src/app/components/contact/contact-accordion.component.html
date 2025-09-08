@@ -3,95 +3,93 @@
     class="accordion-header"
     [class.accordion-header--active]="activePanel === 'contact'"
     (click)="togglePanel('contact')"
-  >
+    >
     <span>Contact Us</span>
     <span>{{ activePanel === "contact" ? "−" : "+" }}</span>
   </button>
-  <div *ngIf="activePanel === 'contact'" class="accordion-body">
-    <div class="section-row">
-      <div class="section-col">
-        <h3>Phone</h3>
+  @if (activePanel === 'contact') {
+    <div class="accordion-body">
+      <div class="section-row">
+        <div class="section-col">
+          <h3>Phone</h3>
+          <p>
+            Our Client Advisors are available from Monday to Sunday, 10 am – 7 pm
+            CET.
+          </p>
+        </div>
+        <div class="section-col right">
+          <p class="button">Call us: 0707587445</p>
+        </div>
+      </div>
+      <hr />
+      <div class="section-row">
+        <div class="section-col">
+          <h3>E-mail</h3>
+          <p>To reach our Client Assistants by email, click "email us".</p>
+        </div>
+        <div class="section-col right">
+          <a class="button" href="mailto:example@gmail.com" target="_blank"
+            >E-mail us</a
+            >
+          </div>
+        </div>
+        <hr />
+        <div class="section-col">
+          <h3>Address</h3>
+          <p>G Commerce Europe SpA</p>
+          <p>Via Don Lorenzo Perosi, 6</p>
+          <p>50018 Scandicci Florence - ITALY</p>
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="accordion-panel">
+    <button
+      class="accordion-header"
+      [class.accordion-header--active]="activePanel === 'shipping'"
+      (click)="togglePanel('shipping')"
+      >
+      <span>Shipping</span>
+      <span>{{ activePanel === "shipping" ? "−" : "+" }}</span>
+    </button>
+    @if (activePanel === 'shipping') {
+      <div class="accordion-body">
+        <h3>Track Your Order</h3>
+        <p>We’ll send a confirmation email with tracking info after shipping.</p>
+        <hr />
+        <h3>Shipping Costs</h3>
         <p>
-          Our Client Advisors are available from Monday to Sunday, 10 am – 7 pm
-          CET.
+          You can ship your order globally. Delivery time may vary for pre-orders.
+        </p>
+        <p>Orders are shipped from Italy.</p>
+      </div>
+    }
+  </div>
+
+  <div class="accordion-panel">
+    <button
+      class="accordion-header"
+      [class.accordion-header--active]="activePanel === 'purchase'"
+      (click)="togglePanel('purchase')"
+      >
+      <span>Purchase Information</span>
+      <span>{{ activePanel === "purchase" ? "−" : "+" }}</span>
+    </button>
+    @if (activePanel === 'purchase') {
+      <div class="accordion-body">
+        <h3>Purchase Methods</h3>
+        <ul>
+          <li>Visa, Mastercard</li>
+          <li>American Express</li>
+          <li>Swish</li>
+          <li>Klarna</li>
+        </ul>
+        <hr />
+        <h3>Duty & Tax</h3>
+        <p>
+          No additional import taxes/duties, unless shipped to Russia or Canada.
         </p>
       </div>
-      <div class="section-col right">
-        <p class="button">Call us: 0707587445</p>
-      </div>
-    </div>
-
-    <hr />
-
-    <div class="section-row">
-      <div class="section-col">
-        <h3>E-mail</h3>
-        <p>To reach our Client Assistants by email, click "email us".</p>
-      </div>
-      <div class="section-col right">
-        <a class="button" href="mailto:example@gmail.com" target="_blank"
-          >E-mail us</a
-        >
-      </div>
-    </div>
-
-    <hr />
-
-    <div class="section-col">
-      <h3>Address</h3>
-      <p>G Commerce Europe SpA</p>
-      <p>Via Don Lorenzo Perosi, 6</p>
-      <p>50018 Scandicci Florence - ITALY</p>
-    </div>
+    }
   </div>
-</div>
-
-<div class="accordion-panel">
-  <button
-    class="accordion-header"
-    [class.accordion-header--active]="activePanel === 'shipping'"
-    (click)="togglePanel('shipping')"
-  >
-    <span>Shipping</span>
-    <span>{{ activePanel === "shipping" ? "−" : "+" }}</span>
-  </button>
-  <div *ngIf="activePanel === 'shipping'" class="accordion-body">
-    <h3>Track Your Order</h3>
-    <p>We’ll send a confirmation email with tracking info after shipping.</p>
-
-    <hr />
-
-    <h3>Shipping Costs</h3>
-    <p>
-      You can ship your order globally. Delivery time may vary for pre-orders.
-    </p>
-    <p>Orders are shipped from Italy.</p>
-  </div>
-</div>
-
-<div class="accordion-panel">
-  <button
-    class="accordion-header"
-    [class.accordion-header--active]="activePanel === 'purchase'"
-    (click)="togglePanel('purchase')"
-  >
-    <span>Purchase Information</span>
-    <span>{{ activePanel === "purchase" ? "−" : "+" }}</span>
-  </button>
-  <div *ngIf="activePanel === 'purchase'" class="accordion-body">
-    <h3>Purchase Methods</h3>
-    <ul>
-      <li>Visa, Mastercard</li>
-      <li>American Express</li>
-      <li>Swish</li>
-      <li>Klarna</li>
-    </ul>
-
-    <hr />
-
-    <h3>Duty & Tax</h3>
-    <p>
-      No additional import taxes/duties, unless shipped to Russia or Canada.
-    </p>
-  </div>
-</div>

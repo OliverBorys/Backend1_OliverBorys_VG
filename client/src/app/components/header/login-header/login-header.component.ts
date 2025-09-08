@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { HeaderService } from '../header.service';
 import { HeaderState } from '../../../models/header-state.model';
-import { NgIf } from '@angular/common';
+
 import { Subscription } from 'rxjs';
 import { FormsModule, NgForm } from '@angular/forms';
 import { LoginResponse } from '../../../models/login-response.model';
@@ -12,7 +12,7 @@ import { FavoritesService } from '../../../services/favorites.services';
 @Component({
   selector: 'app-login-header',
   standalone: true,
-  imports: [NgIf, FormsModule],
+  imports: [FormsModule],
   templateUrl: './login-header.component.html',
   styleUrls: ['./login-header.component.css'],
 })

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { HeroImage } from '../../../models/hero-image.model';
 
@@ -9,7 +9,7 @@ import { HeroImage } from '../../../models/hero-image.model';
   selector: 'app-hero-section',
   templateUrl: './hero-section.component.html',
   styleUrls: ['./hero-section.component.css'],
-  imports: [CommonModule, RouterModule]
+  imports: [RouterModule]
 })
 export class HeroSectionComponent implements OnInit {
   heroImages: HeroImage[] = [];

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
 import { CategoryFormComponent, CategoryFormResult } from '../category-form.component/category-form.component';
@@ -15,7 +15,7 @@ type AdminCategory = {
 @Component({
   selector: 'app-admin-categories',
   standalone: true,
-  imports: [CommonModule, CategoryFormComponent, ConfirmDeleteModalComponent],
+  imports: [CategoryFormComponent, ConfirmDeleteModalComponent],
   templateUrl: './categories.component.html',
   styleUrls: ['../products.component/products.component.css']
 })

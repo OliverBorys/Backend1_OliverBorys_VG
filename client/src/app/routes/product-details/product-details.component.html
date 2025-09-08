@@ -1,10 +1,8 @@
 <main class="product-details-wrapper">
-  <ng-container *ngIf="loading; else content">
+  @if (loading) {
     <p class="loading">Loading...</p>
-  </ng-container>
-
-  <ng-template #content>
-    <ng-container *ngIf="!error; else notFound">
+  } @else {
+    @if (!error) {
       <div class="product-layout">
         <app-product-image [product]="product"></app-product-image>
         <app-product-info [product]="product"></app-product-info>
@@ -14,10 +12,9 @@
         [categoryId]="product.categoryId"
         class="product-swiper"
       ></app-related-products-carousel>
-    </ng-container>
-
-    <ng-template #notFound>
+    } @else {
       <app-missing-product></app-missing-product>
-    </ng-template>
-  </ng-template>
+    }
+  }
+
 </main>

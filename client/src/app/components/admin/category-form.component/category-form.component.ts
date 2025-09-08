@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output, OnChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 
 export type CategoryFormResult = {
@@ -17,7 +17,7 @@ type CategoryInput = {
 @Component({
   selector: 'app-category-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './category-form.component.html',
   styleUrls: ['./category-form.component.css'],
 })

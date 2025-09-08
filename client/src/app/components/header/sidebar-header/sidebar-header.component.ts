@@ -3,13 +3,13 @@ import { Router, RouterModule } from '@angular/router';
 import { HeaderService } from '../header.service';
 import { HeaderState } from '../../../models/header-state.model';
 import { FormsModule, NgForm } from '@angular/forms';
-import { NgIf } from '@angular/common';
+
 import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sidebar-header',
   standalone: true,
-  imports: [NgIf, FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './sidebar-header.component.html',
   styleUrls: ['./sidebar-header.component.css'],
 })

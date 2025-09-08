@@ -4,13 +4,13 @@ import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from './components/header/header/header.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterModule, FooterComponent, HeaderComponent, FormsModule],
+  imports: [RouterModule, FooterComponent, HeaderComponent, FormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

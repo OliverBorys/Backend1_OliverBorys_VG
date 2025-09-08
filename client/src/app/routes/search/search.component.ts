@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { CategoryFilterComponent } from '../../components/product/category-filter/category-filter.component';
@@ -17,7 +17,7 @@ import { FavoritesService } from '../../services/favorites.services';
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.css'],
-  imports: [CommonModule, CategoryFilterComponent, SortDropdownComponent, ProductGridComponent],
+  imports: [CategoryFilterComponent, SortDropdownComponent, ProductGridComponent],
 })
 export class SearchComponent {
   products: GridProduct[] = [];

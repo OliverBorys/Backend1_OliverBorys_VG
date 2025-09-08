@@ -7,81 +7,86 @@
         placeholder="First name"
         formControlName="firstName"
         class="form-input input-left"
-      />
-      <input
-        type="text"
-        placeholder="Last name"
-        formControlName="lastName"
-        class="form-input input-right"
-      />
-    </div>
-    <input
-      type="email"
-      placeholder="Email address"
-      formControlName="email"
-      class="form-input full-input"
-    />
-    <input
-      type="tel"
-      placeholder="Phone number"
-      formControlName="mobilePhone"
-      class="form-input full-input"
-    />
-    <input
-      type="text"
-      placeholder="Address"
-      formControlName="address"
-      class="form-input full-input"
-    />
-    <input type="text" placeholder="City" formControlName="city" class="form-input full-input" />
-    <input
-      type="text"
-      placeholder="Postal code"
-      formControlName="postalCode"
-      class="form-input full-input last-input"
-    />
-    <h2 class="payment-title">Payment</h2>
-    <div class="payment-methods">
-      <label
-        *ngFor="let method of paymentMethods; let i = index"
-        class="payment-option"
+        />
+        <input
+          type="text"
+          placeholder="Last name"
+          formControlName="lastName"
+          class="form-input input-right"
+          />
+        </div>
+        <input
+          type="email"
+          placeholder="Email address"
+          formControlName="email"
+          class="form-input full-input"
+          />
+          <input
+            type="tel"
+            placeholder="Phone number"
+            formControlName="mobilePhone"
+            class="form-input full-input"
+            />
+            <input
+              type="text"
+              placeholder="Address"
+              formControlName="address"
+              class="form-input full-input"
+              />
+              <input type="text" placeholder="City" formControlName="city" class="form-input full-input" />
+              <input
+                type="text"
+                placeholder="Postal code"
+                formControlName="postalCode"
+                class="form-input full-input last-input"
+                />
+                <h2 class="payment-title">Payment</h2>
+                <div class="payment-methods">
+                  @for (method of paymentMethods; track method; let i = $index) {
+                    <label
+                      class="payment-option"
         [ngClass]="{
           'first-option': i === 0,
           'last-option': i === paymentMethods.length - 1
         }"
-      >
-        <div class="payment-label-content">
-          <input
-            type="radio"
-            formControlName="paymentMethod"
-            [value]="method"
-            class="payment-radio"
-          />
-          <span>Pay with {{ method }}</span>
-        </div>
-        <img [src]="paymentIcons[method]" [alt]="method + ' icon'" class="payment-icon" />
-      </label>
-    </div>
-    <small class="error" *ngIf="form.get('paymentMethod')?.touched && form.get('paymentMethod')?.invalid">
-      Please choose a payment method.
-    </small>
-    <label style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem">
-      <input type="checkbox" formControlName="saveToProfile" />
-      <span>Spara uppgifterna på min profil</span>
-    </label>
-  </form>
-  <div class="purchase-container">
-    <button (click)="handlePurchase()" class="purchase-button" [disabled]="form.invalid || isSubmitting">
-      {{ isSubmitting ? 'Processing…' : 'Pay Purchase' }}
-    </button>
+                      >
+                      <div class="payment-label-content">
+                        <input
+                          type="radio"
+                          formControlName="paymentMethod"
+                          [value]="method"
+                          class="payment-radio"
+                          />
+                          <span>Pay with {{ method }}</span>
+                        </div>
+                        <img [src]="paymentIcons[method]" [alt]="method + ' icon'" class="payment-icon" />
+                      </label>
+                    }
+                  </div>
+                  @if (form.get('paymentMethod')?.touched && form.get('paymentMethod')?.invalid) {
+                    <small class="error">
+                      Please choose a payment method.
+                    </small>
+                  }
+                  <label style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem">
+                    <input type="checkbox" formControlName="saveToProfile" />
+                    <span>Spara uppgifterna på min profil</span>
+                  </label>
+                </form>
+                <div class="purchase-container">
+                  <button (click)="handlePurchase()" class="purchase-button" [disabled]="form.invalid || isSubmitting">
+                    {{ isSubmitting ? 'Processing…' : 'Pay Purchase' }}
+                  </button>
 
-    <div class="modal-overlay" *ngIf="showModal">
-      <div class="modal-box">
-        <h2>Thank you for your purchase!</h2>
-        <button type="button" (click)="handleBackToHome()" class="modal-back-btn">
-          Back to Home
-        </button>
-      </div>
-    </div>
-  </div>
-</section>
+                  @if (showModal) {
+                    <div class="modal-overlay">
+                      <div class="modal-box">
+                        <h2>Thank you for your purchase!</h2>
+                        <button type="button" (click)="handleBackToHome()" class="modal-back-btn">
+                          Back to Home
+                        </button>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </section>

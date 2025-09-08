@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { HttpClient } from '@angular/common/http';
 import { ProductGridComponent } from '../../components/product/product-grid/product-grid.component';
 import { HeroSectionComponent } from '../../components/home/hero-section/hero-section.component';
@@ -14,12 +14,11 @@ import { GridProduct } from '../../models/grid-product.model';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   imports: [
-    CommonModule,
     HeroSectionComponent,
     CategoryGridComponent,
     AboutFindUsComponent,
     ProductGridComponent
-  ]
+]
 })
 export class HomeComponent implements OnInit {
   products: GridProduct[] = [];

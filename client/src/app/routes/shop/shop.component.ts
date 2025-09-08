@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { CategoryFilterComponent } from '../../components/product/category-filter/category-filter.component';
 import { SortDropdownComponent } from '../../components/product/sort-dropdown/sort-dropdown.component';
 import { ProductGridComponent } from '../../components/product/product-grid/product-grid.component';
@@ -18,11 +18,10 @@ import { FavoritesService } from '../../services/favorites.services';
   templateUrl: './shop.component.html',
   styleUrls: ['./shop.component.css'],
   imports: [
-    CommonModule,
     CategoryFilterComponent,
     SortDropdownComponent,
-    ProductGridComponent,
-  ],
+    ProductGridComponent
+],
 })
 export class ShopComponent {
   products: GridProduct[] = [];

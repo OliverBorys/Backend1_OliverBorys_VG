@@ -4,23 +4,26 @@
   </button>
 
   <div class="image-container">
-    <span *ngIf="showNewBadge()" class="badge badge-new">New</span>
+    @if (showNewBadge()) {
+      <span class="badge badge-new">New</span>
+    }
 
     <img [src]="product.image" [alt]="product.productName" class="product-img primary" />
-    <img
-      *ngIf="product.secondaryImage1"
-      [src]="product.secondaryImage1"
-      [alt]="product.productName + ' alternate'"
-      class="product-img secondary"
-    />
+    @if (product.secondaryImage1) {
+      <img
+        [src]="product.secondaryImage1"
+        [alt]="product.productName + ' alternate'"
+        class="product-img secondary"
+        />
+    }
   </div>
 
   <div class="product-info">
     <h3 [title]="product.productName">
       {{
-        product.productName.length > 25
-          ? (product.productName | slice : 0 : 20) + '…'
-          : product.productName
+      product.productName.length > 25
+      ? (product.productName | slice : 0 : 20) + '…'
+      : product.productName
       }}
     </h3>
     <p class="brand">{{ product.brand }}</p>

@@ -6,59 +6,63 @@
     <button class="add-btn" (click)="openAddModal()">+ Add Category</button>
   </div>
 
-  <div *ngIf="loading" class="loading">Loading…</div>
-  <div *ngIf="!loading && categories.length === 0" class="no-products">No categories found.</div>
+  @if (loading) {
+    <div class="loading">Loading…</div>
+  }
+  @if (!loading && categories.length === 0) {
+    <div class="no-products">No categories found.</div>
+  }
 
-  <table class="product-table" *ngIf="!loading && categories.length > 0">
-    <thead>
-      <tr>
-        <th class="small">ID</th>
-        <th class="medium">Image</th>
-        <th>Category</th>
-        <th class="small">Products</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr *ngFor="let c of categories">
-        <td class="small">{{ c.id }}</td>
-
-        <td class="medium">
-          <ng-container *ngIf="c.imageUrl; else noimg">
-            <img [src]="c.imageUrl" alt="{{ c.categoryName }}" class="product-thumbnail" />
-          </ng-container>
-          <ng-template #noimg>
-            <span class="muted">—</span>
-          </ng-template>
-        </td>
-
-        <td class="product-cell">
-          <span>{{ c.categoryName }}</span>
-        </td>
-
-        <td class="small">{{ c.productCount }}</td>
-
-        <td class="actions">
-          <button class="edit-btn" (click)="openEditModal(c)">Edit</button>
-          <button class="delete-btn" (click)="openDeleteModal(c)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  @if (!loading && categories.length > 0) {
+    <table class="product-table">
+      <thead>
+        <tr>
+          <th class="small">ID</th>
+          <th class="medium">Image</th>
+          <th>Category</th>
+          <th class="small">Products</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of categories; track c) {
+          <tr>
+            <td class="small">{{ c.id }}</td>
+            <td class="medium">
+              @if (c.imageUrl) {
+                <img [src]="c.imageUrl" alt="{{ c.categoryName }}" class="product-thumbnail" />
+              } @else {
+                <span class="muted">—</span>
+              }
+            </td>
+            <td class="product-cell">
+              <span>{{ c.categoryName }}</span>
+            </td>
+            <td class="small">{{ c.productCount }}</td>
+            <td class="actions">
+              <button class="edit-btn" (click)="openEditModal(c)">Edit</button>
+              <button class="delete-btn" (click)="openDeleteModal(c)">Delete</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
 </section>
 
-<app-category-form
-  *ngIf="showForm"
-  [open]="showForm"
-  [category]="selectedCategory"
-  (save)="handleSave($event)"
-  (close)="closeForm()"
-></app-category-form>
+@if (showForm) {
+  <app-category-form
+    [open]="showForm"
+    [category]="selectedCategory"
+    (save)="handleSave($event)"
+    (close)="closeForm()"
+  ></app-category-form>
+}
 
-<app-confirm-delete-modal
-  *ngIf="showDeleteModal"
-  [itemName]="categoryToDelete?.categoryName || ''"
-  (confirm)="confirmDelete()"
-  (close)="closeDeleteModal()"
-></app-confirm-delete-modal>
+@if (showDeleteModal) {
+  <app-confirm-delete-modal
+    [itemName]="categoryToDelete?.categoryName || ''"
+    (confirm)="confirmDelete()"
+    (close)="closeDeleteModal()"
+  ></app-confirm-delete-modal>
+}

@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   standalone: true,
   selector: 'app-not-found',
-  imports: [CommonModule],
+  imports: [],
   template: `
     <section class="not-found">
       <h1>404 Not Found</h1>

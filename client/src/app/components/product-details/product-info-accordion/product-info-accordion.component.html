@@ -4,7 +4,9 @@
     <span class="accordion-icon">{{ isOpen ? '−' : '+' }}</span>
   </button>
 
-  <div class="accordion-content" *ngIf="isOpen">
-    <ng-content></ng-content>
-  </div>
+  @if (isOpen) {
+    <div class="accordion-content">
+      <ng-content></ng-content>
+    </div>
+  }
 </section>

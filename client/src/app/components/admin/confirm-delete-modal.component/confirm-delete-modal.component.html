@@ -7,18 +7,22 @@
     aria-describedby="modal-description"
     tabindex="0"
     #modalBox
-  >
+    >
     <div class="modal-content">
       <h2 class="modal-title" id="modal-title">Confirm Deletion</h2>
       <div class="modal-body" id="modal-description">
         <p>Are you sure you want to delete:</p>
         <p>"{{ itemName }}"?</p>
-        <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+        @if (errorMessage) {
+          <p class="error-message">{{ errorMessage }}</p>
+        }
       </div>
       <div class="modal-actions">
         <button type="button" (click)="close.emit()" [disabled]="isLoading">Cancel</button>
         <button type="button" class="delete-btn" (click)="confirm.emit()" [disabled]="isLoading">
-          <span *ngIf="isLoading" class="spinner"></span>
+          @if (isLoading) {
+            <span class="spinner"></span>
+          }
           Delete
         </button>
       </div>

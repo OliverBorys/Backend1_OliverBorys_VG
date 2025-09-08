@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
@@ -20,7 +20,7 @@ type GridCard = {
   selector: 'app-category-grid',
   templateUrl: './category-grid.component.html',
   styleUrls: ['./category-grid.component.css'],
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
 })
 export class CategoryGridComponent implements OnInit {
   constructor(private router: Router, private http: HttpClient) {}

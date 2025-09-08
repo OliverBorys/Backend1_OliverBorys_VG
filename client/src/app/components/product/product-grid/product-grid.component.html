@@ -1,14 +1,14 @@
 <section [ngClass]="['product-grid', gridClass, products.length < 4 ? 'left-align' : '']">
-  <ng-container *ngIf="visibleProducts.length > 0; else noResults">
-    <app-product-card
-      *ngFor="let product of visibleProducts"
-      [product]="product"
-      [hideNewBadge]="selectedCategory.toLowerCase() === 'new'"
-      (likeToggled)="onLikeToggle()"
-    ></app-product-card>
-  </ng-container>
-
-  <ng-template #noResults>
+  @if (visibleProducts.length > 0) {
+    @for (product of visibleProducts; track product) {
+      <app-product-card
+        [product]="product"
+        [hideNewBadge]="selectedCategory.toLowerCase() === 'new'"
+        (likeToggled)="onLikeToggle()"
+      ></app-product-card>
+    }
+  } @else {
     <app-no-products-found [query]="query"></app-no-products-found>
-  </ng-template>
+  }
+
 </section>

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CartItem } from '../../../models/cart-item.model';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HeaderService } from '../../header/header.service';
 import { Subscription } from 'rxjs';
@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './product-grid.component.html',
   styleUrls: ['./product-grid.component.css'],
   standalone: true,
-  imports: [NgIf, NgFor, CommonModule],
+  imports: [CommonModule],
 })
 export class ProductGridComponent implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];

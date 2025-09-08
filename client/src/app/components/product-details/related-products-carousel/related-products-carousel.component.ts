@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
+
 import { RouterModule } from '@angular/router';
 import { ProductCardComponent } from '../../product/product-card/product-card.component';
 import { RelatedProduct } from '../../../models/related-products.model';
@@ -9,7 +9,7 @@ import { RelatedProduct } from '../../../models/related-products.model';
 @Component({
   selector: 'app-related-products-carousel',
   standalone: true,
-  imports: [CommonModule, RouterModule, ProductCardComponent],
+  imports: [RouterModule, ProductCardComponent],
   templateUrl: './related-products-carousel.component.html',
   styleUrls: ['./related-products-carousel.component.css'],
 })

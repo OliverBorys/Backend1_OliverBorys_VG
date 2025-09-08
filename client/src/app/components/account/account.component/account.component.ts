@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   FormGroup,
   FormControl,
@@ -49,7 +49,7 @@ type ProfileDTO = {
 @Component({
   selector: 'app-account.component',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [ReactiveFormsModule],
   templateUrl: './account.component.html',
   styleUrls: ['./account.component.css'],
 })

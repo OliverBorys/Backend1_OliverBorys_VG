@@ -1,28 +1,30 @@
-<section class="product-info-wrapper" *ngIf="product">
-  <h3 class="product-title">{{ product.productName }}</h3>
-  <span class="product-price">${{ product.price }}</span>
-
-  <div class="product-sizes" *ngIf="sizeOptions.length > 0">
-    <h4 class="size-title">Select Size</h4>
-    <div class="size-options">
-      <label
-        *ngFor="let size of sizeOptions"
-        [class.selected]="selectedSize === size"
-      >
-        <input
-          type="radio"
-          name="size"
-          [value]="size"
-          (change)="selectedSize = size"
-        />
-        {{ size }}
-      </label>
-    </div>
-  </div>
-
-  <app-product-info-accordion title="Product Description">
-    {{ product.productDescription || 'No description available.' }}
-  </app-product-info-accordion>
-
-  <button class="add-to-cart-btn" (click)="handleAddToCart()">Add to Cart</button>
-</section>
+@if (product) {
+  <section class="product-info-wrapper">
+    <h3 class="product-title">{{ product.productName }}</h3>
+    <span class="product-price">${{ product.price }}</span>
+    @if (sizeOptions.length > 0) {
+      <div class="product-sizes">
+        <h4 class="size-title">Select Size</h4>
+        <div class="size-options">
+          @for (size of sizeOptions; track size) {
+            <label
+              [class.selected]="selectedSize === size"
+              >
+              <input
+                type="radio"
+                name="size"
+                [value]="size"
+                (change)="selectedSize = size"
+                />
+                {{ size }}
+              </label>
+            }
+          </div>
+        </div>
+      }
+      <app-product-info-accordion title="Product Description">
+        {{ product.productDescription || 'No description available.' }}
+      </app-product-info-accordion>
+      <button class="add-to-cart-btn" (click)="handleAddToCart()">Add to Cart</button>
+    </section>
+  }

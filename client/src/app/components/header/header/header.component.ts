@@ -5,7 +5,7 @@ import { HeaderState } from '../../../models/header-state.model';
 import { SidebarHeaderComponent } from '../sidebar-header/sidebar-header.component';
 import { LoginHeaderComponent } from '../login-header/login-header.component';
 import { CartHeaderComponent } from '../cart-header/cart-header.component';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { FavoritesService } from '../../../services/favorites.services';
 
@@ -17,9 +17,8 @@ import { FavoritesService } from '../../../services/favorites.services';
     SidebarHeaderComponent,
     LoginHeaderComponent,
     CartHeaderComponent,
-    NgIf,
-    NgClass,
-  ],
+    NgClass
+],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
 })

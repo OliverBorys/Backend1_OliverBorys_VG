@@ -1,22 +1,26 @@
 <section class="category-filter">
   <div class="category-select-wrapper">
-     <select [(ngModel)]="selectedCategory" (change)="onCategoryChange(selectedCategory)" class="category-dropdown">
+    <select [(ngModel)]="selectedCategory" (change)="onCategoryChange(selectedCategory)" class="category-dropdown">
       <option value="">All Items</option>
       <option value="new">New in</option>
-      <option *ngFor="let category of visibleCategories"
-              [value]="category.categoryName.toLowerCase()">
-        {{ category.categoryName }}
-      </option>
+      @for (category of visibleCategories; track category) {
+        <option
+          [value]="category.categoryName.toLowerCase()">
+          {{ category.categoryName }}
+        </option>
+      }
     </select>
   </div>
 
   <nav class="category-nav">
     <button (click)="onCategoryChange('')" [class.active]="selectedCategory === ''">All</button>
     <button (click)="onCategoryChange('new')" [class.active]="selectedCategory === 'new'">New in</button>
-    <button *ngFor="let category of visibleCategories"
-            (click)="onCategoryChange(category.categoryName.toLowerCase())"
-            [class.active]="selectedCategory === category.categoryName.toLowerCase()">
-      {{ category.categoryName }}
-    </button>
+    @for (category of visibleCategories; track category) {
+      <button
+        (click)="onCategoryChange(category.categoryName.toLowerCase())"
+        [class.active]="selectedCategory === category.categoryName.toLowerCase()">
+        {{ category.categoryName }}
+      </button>
+    }
   </nav>
 </section>

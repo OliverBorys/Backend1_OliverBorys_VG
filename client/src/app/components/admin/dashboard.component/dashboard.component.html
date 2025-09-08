@@ -12,9 +12,11 @@
   <div class="stat-card">
     <h3>Top Selling Products</h3>
     <ul>
-      <li *ngFor="let product of topProducts">
-        {{ product.name }} – {{ product.quantity }} sold
-      </li>
+      @for (product of topProducts; track product) {
+        <li>
+          {{ product.name }} – {{ product.quantity }} sold
+        </li>
+      }
     </ul>
   </div>
 </div>

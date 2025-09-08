@@ -1,10 +1,10 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-confirm-delete-modal',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './confirm-delete-modal.component.html',
   styleUrls: ['./confirm-delete-modal.component.css'],
 })

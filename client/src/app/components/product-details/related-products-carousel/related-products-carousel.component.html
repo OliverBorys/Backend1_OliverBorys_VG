@@ -1,41 +1,44 @@
 <section>
   <h2 class="carousel-title">Related products</h2>
 
-  <div class="related-carousel" *ngIf="filteredProducts.length > 0">
-    <div class="carousel-container">
-      <div
-        class="carousel-track"
+  @if (filteredProducts.length > 0) {
+    <div class="related-carousel">
+      <div class="carousel-container">
+        <div
+          class="carousel-track"
         [style.transform]="
           'translateX(-' + currentIndex * (100 / slidesPerView) + '%)'
         "
-      >
-        <div
-          *ngFor="let product of filteredProducts"
-          class="carousel-slide"
-          [style.flex]="'0 0 ' + 100 / slidesPerView + '%'"
-        >
-          <app-product-card [product]="product"></app-product-card>
+          >
+          @for (product of filteredProducts; track product) {
+            <div
+              class="carousel-slide"
+              [style.flex]="'0 0 ' + 100 / slidesPerView + '%'"
+              >
+              <app-product-card [product]="product"></app-product-card>
+            </div>
+          }
         </div>
       </div>
+      <button
+        class="carousel-button prev"
+        (click)="slidePrev()"
+        aria-label="Previous"
+        >
+        <img src="/images/arrow-left.svg" alt="Previous" class="arrow-icon" />
+      </button>
+      <button
+        class="carousel-button next"
+        (click)="slideNext()"
+        aria-label="Next"
+        >
+        <img src="/images/arrow-right.svg" alt="Next" class="arrow-icon" />
+      </button>
     </div>
-
-    <button
-      class="carousel-button prev"
-      (click)="slidePrev()"
-      aria-label="Previous"
-    >
-      <img src="/images/arrow-left.svg" alt="Previous" class="arrow-icon" />
-    </button>
-
-    <button
-      class="carousel-button next"
-      (click)="slideNext()"
-      aria-label="Next"
-    >
-      <img src="/images/arrow-right.svg" alt="Next" class="arrow-icon" />
-    </button>
-  </div>
-  <p *ngIf="!loading && filteredProducts.length === 0" class="no-product">
-    No related products found.
-  </p>
+  }
+  @if (!loading && filteredProducts.length === 0) {
+    <p class="no-product">
+      No related products found.
+    </p>
+  }
 </section>

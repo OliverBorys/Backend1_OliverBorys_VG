@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ProductInfoAccordionComponent } from '../product-info-accordion/product-info-accordion.component';
 import { HeaderService } from '../../header/header.service';
 import { GridProduct } from '../../../models/grid-product.model';
@@ -9,7 +9,7 @@ import { GridProduct } from '../../../models/grid-product.model';
   selector: 'app-product-info',
   templateUrl: './product-info.component.html',
   styleUrls: ['./product-info.component.css'],
-  imports: [CommonModule, ProductInfoAccordionComponent]
+  imports: [ProductInfoAccordionComponent]
 })
 export class ProductInfoComponent implements OnInit {
   @Input() product!: GridProduct;

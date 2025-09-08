@@ -1,12 +1,19 @@
 <section>
-  <div class="hero-container" *ngIf="!loading && !error && heroImages.length >= 2">
-    <img [src]="heroImages[0].image_url" alt="Women's fashion" class="hero-img half" />
-    <img [src]="heroImages[1].image_url" alt="Men's fashion" class="hero-img half hide-mobile" />
+  @if (!loading && !error && heroImages.length >= 2) {
+    <div class="hero-container">
+      <img [src]="heroImages[0].image_url" alt="Women's fashion" class="hero-img half" />
+      <img [src]="heroImages[1].image_url" alt="Men's fashion" class="hero-img half hide-mobile" />
+      <a [routerLink]="['/shop']" class="shop-button">Shop</a>
+    </div>
+  }
 
-    <a [routerLink]="['/shop']" class="shop-button">Shop</a>
-  </div>
-
-  <p *ngIf="loading">Loading hero images...</p>
-  <p *ngIf="error">{{ error }}</p>
-  <p *ngIf="!loading && !error && heroImages.length < 2">No hero images available</p>
+  @if (loading) {
+    <p>Loading hero images...</p>
+  }
+  @if (error) {
+    <p>{{ error }}</p>
+  }
+  @if (!loading && !error && heroImages.length < 2) {
+    <p>No hero images available</p>
+  }
 </section>

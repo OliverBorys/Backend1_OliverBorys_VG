@@ -1,30 +1,30 @@
 <footer class="footer-container">
   <div class="footer-content">
     <nav class="footer-nav">
-      <ng-container *ngFor="let item of navItems">
+      @for (item of navItems; track item) {
         <div class="nav-item">
           <a [routerLink]="[item.path]" class="footer-link">
             {{ item.label }}
             <span class="footer-underline"></span>
           </a>
         </div>
-      </ng-container>
+      }
     </nav>
 
     <div class="footer-socials">
-      <ng-container *ngFor="let social of socialLinks">
+      @for (social of socialLinks; track social) {
         <a
           [href]="social.href"
           target="_blank"
           [attr.aria-label]="social.label"
           class="footer-social-link"
           [ngStyle]="{ '--hover-color': social.color }"
-        >
+          >
           <svg class="footer-icon">
             <use [attr.href]="'#' + social.icon"></use>
           </svg>
         </a>
-      </ng-container>
+      }
     </div>
 
     <p class="footer-text">

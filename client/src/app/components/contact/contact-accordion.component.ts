@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   standalone: true,
   selector: 'app-contact-accordion',
   templateUrl: './contact-accordion.component.html',
   styleUrls: ['./contact-accordion.component.css'],
-  imports: [CommonModule]
+  imports: []
 })
 export class ContactAccordionComponent {
   activePanel: string | null = null;

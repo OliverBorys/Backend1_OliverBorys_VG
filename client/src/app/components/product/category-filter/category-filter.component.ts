@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { Category } from '../../../models/category.model';
 
@@ -8,7 +8,7 @@ import { Category } from '../../../models/category.model';
   selector: 'app-category-filter',
   templateUrl: './category-filter.component.html',
   styleUrls: ['./category-filter.component.css'],
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
 })
 export class CategoryFilterComponent {
   @Input() categories: Category[] = [];

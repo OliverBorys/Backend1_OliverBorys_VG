@@ -3,7 +3,7 @@
   [ngClass]="{ white: isHeaderWhite, transparent: !isHeaderWhite }"
   (mouseenter)="headerService.setHovered(true)"
   (mouseleave)="headerService.setHovered(false)"
->
+  >
   <section class="header-content">
     <app-sidebar-header [isHeaderWhite]="isHeaderWhite"></app-sidebar-header>
 
@@ -13,29 +13,33 @@
           [src]="isHeaderWhite ? '/images/logo.svg' : '/images/logo-white.svg'"
           alt="Logo"
           class="logo"
-        />
-      </a>
-    </div>
+          />
+        </a>
+      </div>
 
-    <div class="header-right">
-      <form class="search" (submit)="handleSearchSubmit($event)">
-        <input type="text" name="q" placeholder="Search..." class="search-input" />
-      </form>
+      <div class="header-right">
+        <form class="search" (submit)="handleSearchSubmit($event)">
+          <input type="text" name="q" placeholder="Search..." class="search-input" />
+        </form>
 
-      <div *ngIf="state.isLoggedIn" class="welcome-msg">Welcome {{ state.user?.username }}</div>
-      <app-login-header [isHeaderWhite]="isHeaderWhite"></app-login-header>
+        @if (state.isLoggedIn) {
+          <div class="welcome-msg">Welcome {{ state.user?.username }}</div>
+        }
+        <app-login-header [isHeaderWhite]="isHeaderWhite"></app-login-header>
 
-      <a
-        class="icon-btn favorites-btn"
-        [routerLink]="['/shop']"
-        [queryParams]="{ category: 'favorites' }"
-        aria-label="Favorites"
-      >
-        <img [src]="isHeaderWhite ? '/images/like-icon.svg' : '/images/like-icon-white.svg'" alt="Favorites" class="icon" />
-        <span class="badge" *ngIf="likedCount > 0">{{ likedCount }}</span>
-      </a>
+        <a
+          class="icon-btn favorites-btn"
+          [routerLink]="['/shop']"
+          [queryParams]="{ category: 'favorites' }"
+          aria-label="Favorites"
+          >
+          <img [src]="isHeaderWhite ? '/images/like-icon.svg' : '/images/like-icon-white.svg'" alt="Favorites" class="icon" />
+          @if (likedCount > 0) {
+            <span class="badge">{{ likedCount }}</span>
+          }
+        </a>
 
-      <app-cart-header [isHeaderWhite]="isHeaderWhite"></app-cart-header>
-    </div>
-  </section>
-</header>
+        <app-cart-header [isHeaderWhite]="isHeaderWhite"></app-cart-header>
+      </div>
+    </section>
+  </header>
