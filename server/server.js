@@ -4,10 +4,54 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import session from "express-session";
 import connectSqlite3 from "connect-sqlite3";
+import fs from "fs";
+import multer from "multer";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const PORT = process.env.PORT || 8000;
 const SQLiteStore = connectSqlite3(session);
+
+// --- Static uploads (kategoribilder) ---
+const UPLOAD_ROOT = path.join(process.cwd(), "uploads");
+const CATEGORY_UPLOAD_DIR = path.join(UPLOAD_ROOT, "categories");
+fs.mkdirSync(CATEGORY_UPLOAD_DIR, { recursive: true });
+app.use("/uploads", express.static(UPLOAD_ROOT));
+
+// Multer (lagra filer i uploads/categories)
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, CATEGORY_UPLOAD_DIR),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname || "").toLowerCase();
+    const safe = Date.now() + "-" + Math.random().toString(16).slice(2) + ext;
+    cb(null, safe);
+  },
+});
+const upload = multer({ storage });
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// se till att dina uppladdade filer hamnar här: <repo>/server/uploads/...
+const uploadsDir = path.join(__dirname, "uploads");
+
+app.use(
+  "/uploads",
+  express.static(uploadsDir, {
+    setHeaders(res, filePath) {
+      if (filePath.endsWith(".avif")) res.setHeader("Content-Type", "image/avif");
+      else if (filePath.endsWith(".webp")) res.setHeader("Content-Type", "image/webp");
+      else if (filePath.endsWith(".svg")) res.setHeader("Content-Type", "image/svg+xml");
+    },
+  })
+);
+
+// (tillfällig loggning – hjälper felsökning)
+app.use("/uploads", (req, _res, next) => {
+  console.log("Static /uploads hit:", req.path);
+  next();
+});
 
 // --- Middleware ---
 app.use(
@@ -32,6 +76,23 @@ app.use(
   })
 );
 
+// Serva alla filer under ./uploads på /uploads
+app.use(
+  "/uploads",
+  express.static(uploadsDir, {
+    setHeaders(res, filePath) {
+      // Sätt korrekta content-types för moderna bildformat
+      if (filePath.endsWith(".avif")) {
+        res.setHeader("Content-Type", "image/avif");
+      } else if (filePath.endsWith(".webp")) {
+        res.setHeader("Content-Type", "image/webp");
+      } else if (filePath.endsWith(".svg")) {
+        res.setHeader("Content-Type", "image/svg+xml");
+      }
+    },
+  })
+);
+
 // --- DB init ---
 const db = new Database("./db/app.db", { verbose: console.log });
 db.pragma("journal_mode = WAL");
@@ -46,7 +107,7 @@ function isBcryptHash(s) {
   return typeof s === "string" && /^\$2[aby]\$\d{2}\$/.test(s);
 }
 
-// --- Schema ---
+// --- Schema (CREATE IF NOT EXISTS) ---
 db.prepare(
   `
 CREATE TABLE IF NOT EXISTS users (
@@ -57,11 +118,13 @@ CREATE TABLE IF NOT EXISTS users (
 );`
 ).run();
 
+// Fri categories-tabell (namn + frivillig bild)
 db.prepare(
   `
 CREATE TABLE IF NOT EXISTS categories (
-  id INTEGER PRIMARY KEY,
-  categoryName TEXT UNIQUE NOT NULL CHECK (categoryName IN ('Shoes','Clothes','Bags','Watches','Sunglasses'))
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  categoryName TEXT UNIQUE NOT NULL,
+  image_url TEXT
 );`
 ).run();
 
@@ -193,25 +256,6 @@ if (process.env.SEED_ADMIN_USER && process.env.SEED_ADMIN_PASS) {
   }
 }
 
-// --- Engångs-seed av kategorier ---
-const catCount = db.prepare(`SELECT COUNT(*) as c FROM categories;`).get().c;
-if (catCount === 0) {
-  const seed = db.prepare(
-    `INSERT INTO categories (id, categoryName) VALUES (?,?)`
-  );
-  const cats = [
-    [1, "Shoes"],
-    [2, "Clothes"],
-    [3, "Bags"],
-    [4, "Watches"],
-    [5, "Sunglasses"],
-  ];
-  const tx = db.transaction((rows) =>
-    rows.forEach((r) => seed.run(r[0], r[1]))
-  );
-  tx(cats);
-}
-
 // --- Migration helpers ---
 function columnExists(table, col) {
   const rows = db.prepare(`PRAGMA table_info(${table})`).all();
@@ -318,6 +362,61 @@ try {
   console.error("order_items migration failed:", e);
 }
 
+// --- Migration: categories – drop CHECK & use AUTOINCREMENT if needed ---
+(function migrateCategoriesIfNeeded() {
+  const row = db
+    .prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='categories'")
+    .get();
+  const sql = row?.sql || "";
+  const hasCheck = /CHECK\s*\(/i.test(sql);
+  const hasAuto = /AUTOINCREMENT/i.test(sql);
+
+  if (!hasCheck && hasAuto) {
+    // already good
+  } else {
+    console.log("Migrating categories table -> drop CHECK, use AUTOINCREMENT...");
+
+    db.pragma("foreign_keys = OFF");
+    try {
+      db.prepare(`
+        CREATE TABLE IF NOT EXISTS categories_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          categoryName TEXT UNIQUE NOT NULL
+        );
+      `).run();
+
+      // Copy existing rows (keep ids)
+      db.prepare(`
+        INSERT OR IGNORE INTO categories_new (id, categoryName)
+        SELECT id, categoryName FROM categories;
+      `).run();
+
+      db.prepare(`DROP TABLE categories;`).run();
+      db.prepare(`ALTER TABLE categories_new RENAME TO categories;`).run();
+    } finally {
+      db.pragma("foreign_keys = ON");
+    }
+  }
+
+  // ADD image_url column if missing
+  try {
+    if (!columnExists("categories", "image_url")) {
+      db.prepare(`ALTER TABLE categories ADD COLUMN image_url TEXT`).run();
+    }
+  } catch (e) {
+    console.error("categories add image_url failed:", e);
+  }
+})();
+
+// --- Engångs-seed av kategorier ---
+const catCount = db.prepare(`SELECT COUNT(*) as c FROM categories;`).get().c;
+if (catCount === 0) {
+  const seed = db.prepare(`INSERT INTO categories (categoryName) VALUES (?)`);
+  const cats = ["Shoes", "Clothes", "Bags", "Watches", "Sunglasses"];
+  const tx = db.transaction((rows) => rows.forEach((name) => seed.run(name)));
+  tx(cats);
+}
+
 // --- Auth guards ---
 function requireAuth(req, res, next) {
   if (!req.session.user) {
@@ -349,6 +448,18 @@ function getOrCreateCartOrderId(userId) {
     .prepare("INSERT INTO orders (user_id, status) VALUES (?, 'cart')")
     .run(userId);
   return result.lastInsertRowid;
+}
+
+// Skapa/garanterad fallback-kategori (Uncategorized)
+function ensureDefaultCategory() {
+  const row = db
+    .prepare("SELECT id FROM categories WHERE categoryName = 'Uncategorized'")
+    .get();
+  if (row) return row.id;
+  const ins = db
+    .prepare("INSERT INTO categories (categoryName, image_url) VALUES (?, NULL)")
+    .run("Uncategorized");
+  return ins.lastInsertRowid;
 }
 
 // --- Auth endpoints ---
@@ -390,8 +501,13 @@ app.post("/api/auth/login", async (req, res) => {
     ok = password === user.password;
     if (ok) {
       const newHash = await hashPassword(password);
-      db.prepare("UPDATE users SET password=? WHERE id=?").run(newHash, user.id);
-      console.log(`Upgraded plaintext password -> bcrypt for user ${user.username}`);
+      db.prepare("UPDATE users SET password=? WHERE id=?").run(
+        newHash,
+        user.id
+      );
+      console.log(
+        `Upgraded plaintext password -> bcrypt for user ${user.username}`
+      );
     }
   }
 
@@ -486,11 +602,130 @@ app.get("/api/admin/users", requireAdmin, (req, res) => {
   res.json(rows);
 });
 
-// --- Data (categories/products/hero_images) ---
-app.get("/api/categories", (req, res) => {
-  res.json(db.prepare("SELECT * FROM categories ORDER BY id").all());
+// ---------- Categories (ADMIN) ----------
+
+// Lista kategorier (med produktcount + bild)
+app.get("/api/categories", requireAdmin, (req, res) => {
+  const rows = db.prepare(
+    `
+    SELECT
+      c.id,
+      c.categoryName,
+      c.image_url AS imageUrl,
+      COALESCE(cnt.c, 0) AS productCount
+    FROM categories c
+    LEFT JOIN (
+      SELECT categoryId, COUNT(*) AS c
+      FROM products
+      GROUP BY categoryId
+    ) cnt ON cnt.categoryId = c.id
+    ORDER BY c.id ASC
+  `
+  ).all();
+  res.json(rows);
 });
 
+// Skapa kategori (med ev. bild)
+app.post("/api/categories", requireAdmin, upload.single("image"), (req, res) => {
+  const name = String(req.body?.categoryName || "").trim();
+  if (!name) {
+    if (req.file) fs.unlink(req.file.path, () => {});
+    return res.status(400).json({ error: "categoryName required" });
+  }
+
+  const imageUrl = req.file ? `/uploads/categories/${req.file.filename}` : null;
+  try {
+    const r = db.prepare("INSERT INTO categories (categoryName, image_url) VALUES (?,?)")
+      .run(name, imageUrl);
+    res.status(201).json({
+      id: r.lastInsertRowid,
+      categoryName: name,
+      imageUrl,
+      productCount: 0,
+    });
+  } catch (e) {
+    if (req.file) fs.unlink(req.file.path, () => {});
+    if (String(e).includes("UNIQUE")) {
+      return res.status(409).json({ error: "Category already exists" });
+    }
+    res.status(400).json({ error: "Could not create category" });
+  }
+});
+
+// Uppdatera kategori (namn + valfri ny bild)
+app.put("/api/categories/:id", requireAdmin, upload.single("image"), (req, res) => {
+  const id = Number(req.params.id);
+  const name = String(req.body?.categoryName || "").trim();
+  if (!id || !name) {
+    if (req.file) fs.unlink(req.file.path, () => {});
+    return res.status(400).json({ error: "Invalid input" });
+  }
+
+  const existing = db.prepare(`SELECT image_url FROM categories WHERE id=?`).get(id);
+  if (!existing) {
+    if (req.file) fs.unlink(req.file.path, () => {});
+    return res.status(404).json({ error: "Category not found" });
+  }
+
+  let newImageUrl = existing.image_url;
+  if (req.file) {
+    // ta bort gammal fil om den låg under /uploads
+    if (existing.image_url && existing.image_url.startsWith("/uploads/")) {
+      const abs = path.join(process.cwd(), existing.image_url.replace("/uploads", "uploads"));
+      fs.existsSync(abs) && fs.unlink(abs, () => {});
+    }
+    newImageUrl = `/uploads/categories/${req.file.filename}`;
+  }
+
+  try {
+    db.prepare(`UPDATE categories SET categoryName=?, image_url=? WHERE id=?`)
+      .run(name, newImageUrl, id);
+    res.json({ id, categoryName: name, imageUrl: newImageUrl });
+  } catch (e) {
+    if (String(e).includes("UNIQUE")) {
+      return res.status(409).json({ error: "Category already exists" });
+    }
+    res.status(400).json({ error: "Could not update category" });
+  }
+});
+
+// Delete kategori (force: flytta produkter -> Uncategorized)
+app.delete("/api/categories/:id", requireAdmin, (req, res) => {
+  const id = Number(req.params.id);
+  if (!id) return res.status(400).json({ error: "Invalid id" });
+
+  const defaultId = ensureDefaultCategory();
+  if (id === defaultId) {
+    return res.status(400).json({ error: "Cannot delete 'Uncategorized' category" });
+  }
+
+  const count = db.prepare(`SELECT COUNT(*) AS c FROM products WHERE categoryId=?`).get(id)?.c || 0;
+  const force = String(req.query.force || "").toLowerCase() === "true";
+
+  if (count > 0 && !force) {
+    // UI kan visa varning och prova igen med ?force=true
+    return res.status(409).json({ error: "Category has products", productCount: count });
+  }
+
+  // Om det finns produkter och force=true -> flytta till default
+  if (count > 0) {
+    db.prepare(`UPDATE products SET categoryId=? WHERE categoryId=?`).run(defaultId, id);
+  }
+
+  const existing = db.prepare(`SELECT image_url FROM categories WHERE id=?`).get(id);
+  const result = db.prepare(`DELETE FROM categories WHERE id=?`).run(id);
+  if (!result.changes) return res.status(404).json({ error: "Category not found" });
+
+  // städa upp bildfil
+  if (existing?.image_url && existing.image_url.startsWith("/uploads/")) {
+    const abs = path.join(process.cwd(), existing.image_url.replace("/uploads", "uploads"));
+    fs.existsSync(abs) && fs.unlink(abs, () => {});
+  }
+
+  res.json({ message: "Deleted", id, movedProducts: count });
+});
+
+// --- Products (public GET, admin CUD) ---
 app.get("/api/products", (req, res) => {
   const rows = db
     .prepare(
@@ -978,7 +1213,8 @@ app.get("/api/orders", requireAuth, (req, res) => {
     const items = itemsStmt.all(o.id).map((it) => ({
       ...it,
       unit_price: it.unit_price ?? it.price_at_purchase,
-      line_total: it.line_total ?? (it.unit_price ?? it.price_at_purchase) * it.quantity,
+      line_total:
+        it.line_total ?? (it.unit_price ?? it.price_at_purchase) * it.quantity,
     }));
     const total = items.reduce((s, x) => s + x.line_total, 0);
     return { ...o, items, total };
@@ -1005,7 +1241,8 @@ app.get("/api/orders/:id", requireAuth, (req, res) => {
     .map((it) => ({
       ...it,
       unit_price: it.unit_price ?? it.price_at_purchase,
-      line_total: it.line_total ?? (it.unit_price ?? it.price_at_purchase) * it.quantity,
+      line_total:
+        it.line_total ?? (it.unit_price ?? it.price_at_purchase) * it.quantity,
     }));
   const total = items.reduce((s, x) => s + x.line_total, 0);
   res.json({ ...order, items, total });
@@ -1095,12 +1332,14 @@ app.post("/api/orders/checkout", requireAuth, (req, res) => {
   if (!cart) {
     // 2) Idempotent: om cart redan konverterats, returnera senaste skapade ordern
     const recent = db
-      .prepare(`
+      .prepare(
+        `
         SELECT id FROM orders
         WHERE user_id=? AND status='created'
         ORDER BY datetime(created_at) DESC
         LIMIT 1
-      `)
+      `
+      )
       .get(req.session.user.id);
 
     if (recent) {
@@ -1118,12 +1357,13 @@ app.post("/api/orders/checkout", requireAuth, (req, res) => {
   }
 
   // 4) Fyll snapshot (antingen från body eller profil)
-  const profile = db
-    .prepare(
-      `SELECT firstName, lastName, email, mobilePhone, address, city, postalCode
+  const profile =
+    db
+      .prepare(
+        `SELECT firstName, lastName, email, mobilePhone, address, city, postalCode
        FROM user_profiles WHERE user_id=?`
-    )
-    .get(req.session.user.id) || {};
+      )
+      .get(req.session.user.id) || {};
 
   const snap = {
     firstName: firstName ?? profile.firstName ?? null,
@@ -1136,7 +1376,8 @@ app.post("/api/orders/checkout", requireAuth, (req, res) => {
   };
 
   // 5) Konvertera cart -> created och spara betalmetod + snapshot
-  db.prepare(`
+  db.prepare(
+    `
     UPDATE orders
        SET status='created',
            created_at=datetime('now'),
@@ -1149,7 +1390,8 @@ app.post("/api/orders/checkout", requireAuth, (req, res) => {
            buyer_city        = COALESCE(?, buyer_city),
            buyer_postalCode  = COALESCE(?, buyer_postalCode)
      WHERE id=?
-  `).run(
+  `
+  ).run(
     paymentMethod,
     snap.firstName,
     snap.lastName,
@@ -1166,6 +1408,7 @@ app.post("/api/orders/checkout", requireAuth, (req, res) => {
 
 // --- Guest checkout: konvertera gäst-session till order ---
 app.post("/api/cart/guest/checkout", (req, res) => {
+  // Skydda ifall någon råkar vara inloggad
   if (req.session.user) {
     return res
       .status(400)
@@ -1175,6 +1418,7 @@ app.post("/api/cart/guest/checkout", (req, res) => {
   ensureGuestCart(req);
   const itemsInCart = req.session.guestCart || [];
   if (!Array.isArray(itemsInCart) || itemsInCart.length === 0) {
+    // håll det “snällt” – svara 200 och töm redan tom kundvagn
     return res.json({ message: "Guest cart is already empty" });
   }
 
@@ -1190,7 +1434,7 @@ app.post("/api/cart/guest/checkout", (req, res) => {
   } = req.body || {};
 
   try {
-    const tx = db.transaction((payload) => {
+    const tx = db.transaction(() => {
       // 1) Skapa order (guest -> user_id = NULL)
       const orderRes = db
         .prepare(
@@ -1246,7 +1490,7 @@ app.post("/api/cart/guest/checkout", (req, res) => {
       return orderId;
     });
 
-    const orderId = tx({});
+    const orderId = tx();
     // 3) Töm gäst-varukorg
     req.session.guestCart = [];
     res.json({ orderId, message: "Order created (guest)" });
@@ -1444,7 +1688,8 @@ app.delete("/api/admin/orders/:id", requireAdmin, (req, res) => {
   if (Number.isNaN(id)) return res.status(400).json({ error: "Invalid id" });
 
   const result = db.prepare(`DELETE FROM orders WHERE id=?`).run(id);
-  if (!result.changes) return res.status(404).json({ error: "Order not found" });
+  if (!result.changes)
+    return res.status(404).json({ error: "Order not found" });
   res.json({ message: "Order deleted", id });
 });
 

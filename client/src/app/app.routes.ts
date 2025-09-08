@@ -19,6 +19,7 @@ import { AdminComponent } from './routes/admin/admin.component/admin.component';
 import { DashboardComponent } from './components/admin/dashboard.component/dashboard.component';
 import { OrdersComponent } from './components/admin/orders.component/orders.component';
 import { ProductsComponent } from './components/admin/products.component/products.component';
+import { CategoriesComponent } from './components/admin/categories.component/categories.component';
 import { HeroImagesComponent } from './components/admin/hero-images.component/hero-images.component';
 
 import { authGuard } from './guards/auth.guard';
@@ -56,6 +57,7 @@ export const routes: Routes = [
       { path: 'products', component: ProductsComponent },
       { path: 'hero-images', component: HeroImagesComponent },
       { path: 'orders', component: OrdersComponent },
+      { path: 'categories', component: CategoriesComponent },
     ],
   },
 

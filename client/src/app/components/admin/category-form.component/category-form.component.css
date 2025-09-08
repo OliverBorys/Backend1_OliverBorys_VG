@@ -1,0 +1,117 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+.modal-box {
+  width: 100%;
+  max-width: 540px;
+  background: #fff;
+  border-radius: 1rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.modal-content {
+  overflow-y: auto;
+  flex: 1;
+  padding: 2rem 2rem;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-align: center;
+  color: #2d2d2d;
+}
+
+.form-grid {
+  display: grid;
+  gap: 1.5rem;
+  justify-items: center;
+}
+
+.form-group {
+  width: 100%;
+  max-width: 420px;        /* välj bredd som passar din design */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  transition: all 0.2s ease;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: #fff;
+}
+
+.file-label {
+  display: block;
+  font-size: 1rem;
+  color: #2d2d2d;
+  margin-bottom: 0.5rem;
+}
+.preview img {
+  margin-top: 8px;
+  width: 160px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+.error-message {
+  color: #d63031;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.modal-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.modal-actions button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-actions button[type='button'] {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.modal-actions button[type='button']:hover {
+  background-color: #e0e0e0;
+}
+
+.modal-actions button[type='submit'] {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
+.modal-actions button[type='submit']:hover {
+  background-color: #2563eb;
+}
+
+.muted {
+  color: #888;
+  font-size: 12px;
+}

@@ -1,0 +1,46 @@
+<div class="modal-backdrop" *ngIf="open" (click)="close.emit()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <h2 class="modal-title">
+        {{ category ? 'Edit Category' : 'Add New Category' }}
+      </h2>
+
+      <div class="form-section">
+        <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+          <div class="form-group">
+            <input formControlName="categoryName" placeholder="Category name" />
+            <div
+              *ngIf="form.get('categoryName')?.touched && form.get('categoryName')?.invalid"
+              class="error-message"
+            >
+              Category name is required (max 20).
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="file-label">Image</label>
+            <input style="border: none; padding: 0; border-radius: 0;" type="file" accept="image/*" (change)="onFileSelected($event)" />
+
+            <div class="preview" *ngIf="previewUrl">
+              <img [src]="previewUrl" alt="Preview" />
+            </div>
+
+            <small *ngIf="previewUrl; else showCurrent">
+              Preview of category image
+            </small>
+            <ng-template #showCurrent>
+              <small *ngIf="category?.imageUrl">{{ category?.imageUrl }}</small>
+            </ng-template>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" (click)="close.emit()">Cancel</button>
+            <button type="submit" [disabled]="form.invalid">
+              {{ category ? 'Save' : 'Add Category' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

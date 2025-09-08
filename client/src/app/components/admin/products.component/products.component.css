@@ -1,4 +1,4 @@
-.admin-products-title {
+.admin-title {
   text-align: center;
   font-size: 2rem;
   font-weight: 500;
@@ -12,7 +12,7 @@
   margin: 0 auto;
 }
 
-.product-toolbar {
+.toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
