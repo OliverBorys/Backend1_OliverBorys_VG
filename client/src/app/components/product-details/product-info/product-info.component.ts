@@ -37,10 +37,8 @@ export class ProductInfoComponent implements OnInit {
   }
 
   async handleAddToCart(): Promise<void> {
-    // Storleken används bara i UI just nu (order_items i backend lagrar inte size).
-    // Vill du spara size i DB senare: utöka API:t och tabellen.
-    await this.headerService.addToCart(this.product.id);   // POST /api/cart/:id
-    this.headerService.openCartTemporarily();              // öppna lådan som innan
+    await this.headerService.addToCart(this.product.id);
+    this.headerService.openCartTemporarily();
     this.cartUpdated.emit(true);
   }
 }

@@ -37,7 +37,6 @@ export class CategoryGridComponent implements OnInit {
   };
 
   ngOnInit(): void {
-    // Public endpoint that already excludes "Uncategorized" and requires an image
     this.http.get<PublicCategory[]>('/api/categories/public').subscribe({
       next: (rows) => {
         const mapped = (rows || [])
@@ -47,12 +46,10 @@ export class CategoryGridComponent implements OnInit {
             img: c.imageUrl!,
           }));
 
-        // Put "New" first, then the DB categories
         this.cards = [this.NEW_CARD, ...mapped];
         this.loading = false;
       },
       error: () => {
-        // Even if the API fails, still show the “New” card
         this.cards = [this.NEW_CARD];
         this.error = 'Failed to load categories';
         this.loading = false;

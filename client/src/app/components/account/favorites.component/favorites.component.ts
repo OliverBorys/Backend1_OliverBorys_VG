@@ -21,7 +21,6 @@ export class FavoritesComponent implements OnInit, OnDestroy {
   pageTitle = 'Favorites';
   products: GridProduct[] = [];
 
-  // identiskt beteende som i Shop
   sort: string = 'newest';
   query: string = '';
   readonly selectedCategory = 'favorites';

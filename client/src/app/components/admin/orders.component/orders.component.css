@@ -14,7 +14,6 @@
   margin: 2rem 0 3rem;
 }
 
-/* Filters */
 .filters {
   margin: 0 1rem 1rem;
   background: #fff;
@@ -64,7 +63,6 @@
 }
 .btn-ghost:hover { background: #f3f4f6; }
 
-/* Cards */
 .order-card {
   margin: 1rem;
   padding: 1rem;

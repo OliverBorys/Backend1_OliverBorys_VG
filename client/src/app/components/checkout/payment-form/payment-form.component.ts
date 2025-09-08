@@ -102,7 +102,6 @@ export class PaymentFormComponent implements OnInit {
       postalCode,
     };
 
-    // Kolla om inloggad
     this.http.get<{ user: any }>('/api/auth/me', { withCredentials: true }).subscribe({
       next: (me) => {
         const isLoggedIn = !!me?.user;

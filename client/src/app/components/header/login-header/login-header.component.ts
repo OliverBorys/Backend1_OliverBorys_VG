@@ -94,7 +94,6 @@ export class LoginHeaderComponent implements OnInit, OnDestroy {
         next: async (res) => {
           this.headerService.setLoggedIn(res.user);
 
-          // ⬇️ NYTT: ladda om varukorgen från servern (migrerad guest→DB)
           await this.headerService.rehydrateAfterAuthChange();
 
           this.isPopupOpen = false;
@@ -137,7 +136,6 @@ export class LoginHeaderComponent implements OnInit, OnDestroy {
               next: async (res) => {
                 this.headerService.setLoggedIn(res.user);
 
-                // ⬇️ NYTT: samma synk efter auto-login
                 await this.headerService.rehydrateAfterAuthChange();
 
                 this.isPopupOpen = false;

@@ -28,8 +28,8 @@ type AdminOrder = {
   id: number;
   userId: number;
   status: string;
-  createdAt: string;            // ISO-ish from SQLite
-  paymentMethod: string | null; // may be null
+  createdAt: string;
+  paymentMethod: string | null;
   customer: AdminCustomer;
   items: AdminOrderItem[];
 };
@@ -46,7 +46,6 @@ export class OrdersComponent implements OnInit {
 
   orders: AdminOrder[] = [];
   loading = false;
-  // filters
   filter = {
     from: '',
     to: '',

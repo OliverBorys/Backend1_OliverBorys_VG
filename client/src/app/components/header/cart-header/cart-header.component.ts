@@ -84,7 +84,6 @@ export class CartHeaderComponent implements OnInit, OnDestroy {
 
   async changeQuantity(event: Event, productId: number, quantity: number) {
     event.stopPropagation();
-    // Låt 0 bli "ta bort"
     if (quantity < 0) return;
     await this.headerService.setQuantity(productId, quantity);
   }

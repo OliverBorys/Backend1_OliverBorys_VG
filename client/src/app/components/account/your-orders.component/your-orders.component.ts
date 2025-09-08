@@ -10,7 +10,7 @@ type RawOrderItem = {
   product_name?: string;
   unit_price?: number;
   line_total?: number;
-  productName?: string; // from JOIN p.productName
+  productName?: string;
   image?: string | null;
 };
 
@@ -74,16 +74,13 @@ export class YourOrdersComponent implements OnInit {
     this.loading = true;
     this.errorMsg = '';
 
-    // Load profile (best-effort, not required)
     this.http.get<Profile>('/api/profile', { withCredentials: true }).subscribe({
       next: (p) => (this.profile = p),
       error: () => (this.profile = null),
     });
 
-    // Load orders for the logged-in user
     this.http.get<RawOrder[]>('/api/orders', { withCredentials: true }).subscribe({
       next: (rows) => {
-        // Only show created (exclude any carts)
         const created = (rows || []).filter((o) => o.status === 'created');
 
         this.orders = created.map((o) => {
@@ -122,7 +119,6 @@ export class YourOrdersComponent implements OnInit {
     });
   }
 
-  // Helpers
   asCurrency(v: number): string {
     return `$${(v ?? 0).toFixed(2)}`;
   }

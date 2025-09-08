@@ -12,7 +12,6 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { Title } from '@angular/platform-browser';
 
-/** Hjälpvaliderare: matcha två fält i samma FormGroup */
 function matchValidator(a: string, b: string) {
   return (group: AbstractControl): ValidationErrors | null => {
     const av = group.get(a)?.value;
@@ -21,7 +20,6 @@ function matchValidator(a: string, b: string) {
   };
 }
 
-/** Typer för starkt typade formulär */
 type ProfileFormModel = {
   firstName: FormControl<string>;
   lastName: FormControl<string>;
@@ -38,7 +36,6 @@ type PasswordFormModel = {
   confirmNewPassword: FormControl<string>;
 };
 
-/** DTO från /api/profile */
 type ProfileDTO = {
   firstName: string;
   lastName: string;
@@ -57,7 +54,6 @@ type ProfileDTO = {
   styleUrls: ['./account.component.css'],
 })
 export class AccountComponent implements OnInit {
-  // Starkt typade FormGroups
   profileForm: FormGroup<ProfileFormModel>;
   usernameForm: FormGroup<UsernameFormModel>;
   passwordForm: FormGroup<PasswordFormModel>;
@@ -72,7 +68,6 @@ export class AccountComponent implements OnInit {
   passwordMessage = '';
 
   constructor(private fb: NonNullableFormBuilder, private title: Title, private http: HttpClient) {
-    // Initiera kontroller med default-värden som tomma strängar (NonNullable)
     this.profileForm = this.fb.group({
       firstName: this.fb.control(''),
       lastName: this.fb.control(''),
@@ -109,7 +104,6 @@ export class AccountComponent implements OnInit {
   private loadData() {
     this.loadingProfile = true;
 
-    // Hämtar profil (servern returnerar tomma strängar om ingen profil finns)
     this.http.get<ProfileDTO>('/api/profile', { withCredentials: true }).subscribe({
       next: (p) => {
         if (p) {
@@ -127,7 +121,6 @@ export class AccountComponent implements OnInit {
       complete: () => (this.loadingProfile = false),
     });
 
-    // Hämtar nuvarande username
     this.http
       .get<{ user: { username: string } | null }>('/api/auth/me', { withCredentials: true })
       .subscribe((res) => {
@@ -202,7 +195,6 @@ export class AccountComponent implements OnInit {
     });
   }
 
-  // Korta getters för template
   get pf() {
     return this.profileForm.controls;
   }
