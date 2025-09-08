@@ -1,12 +1,10 @@
 # DB
-/server/db/*.db
-/server/db/*.db-shm
-/server/db/*.db-wal
-db/sessions.db
+db/**
+!db/.gitkeep
 
-# Uploads (lagrade bilder)
-server/uploads/**
-!server/uploads/.gitkeep   # behåll mappen tom i git
+# lagrade bilder
+uploads/**
+!uploads/.gitkeep
 
 # Miljö & byggen
 .env
