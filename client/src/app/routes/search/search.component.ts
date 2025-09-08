@@ -37,7 +37,7 @@ export class SearchComponent {
 
   ngOnInit(): void {
     this.http.get<GridProduct[]>('/api/products').subscribe((data) => (this.products = data));
-    this.http.get<Category[]>('/api/categories').subscribe((data) => (this.categories = data));
+    this.http.get<Category[]>('/api/categories/public').subscribe((data) => (this.categories = data));
 
     this.route.queryParams.subscribe((params) => {
       this.query = params['q'] || '';

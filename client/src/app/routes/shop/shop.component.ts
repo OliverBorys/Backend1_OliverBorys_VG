@@ -49,7 +49,7 @@ export class ShopComponent {
     });
 
     this.http.get<GridProduct[]>('/api/products').subscribe((data) => (this.products = data));
-    this.http.get<Category[]>('/api/categories').subscribe((data) => (this.categories = data));
+    this.http.get<Category[]>('/api/categories/public').subscribe((data) => (this.categories = data));
 
     this.favs.load();
     this.favSub = this.favs.likedSet$().subscribe((set) => {
