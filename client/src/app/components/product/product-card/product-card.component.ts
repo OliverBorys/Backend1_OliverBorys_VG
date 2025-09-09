@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { FavoritesService } from '../../../services/favorites.services';
+import { SlugPipe } from '../../../shared/pipes/slug.pipe';
 
 @Component({
   standalone: true,
   selector: 'app-product-card',
   templateUrl: './product-card.component.html',
   styleUrls: ['./product-card.component.css'],
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, SlugPipe],
 })
 export class ProductCardComponent implements OnInit, OnDestroy {
   @Input() product!: {

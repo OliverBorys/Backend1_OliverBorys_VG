@@ -29,7 +29,7 @@ export const routes: Routes = [
   { path: 'contact', component: ContactComponent },
   { path: 'about', component: AboutComponent },
   { path: 'shop', component: ShopComponent },
-  { path: 'product/:id', component: ProductDetailsComponent },
+  { path: 'product/:productName/:id', component: ProductDetailsComponent },
   { path: 'search', component: SearchComponent },
   { path: 'checkout', component: CheckoutComponent },
   {

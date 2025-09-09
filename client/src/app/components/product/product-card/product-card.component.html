@@ -1,4 +1,4 @@
-<a [routerLink]="['/product', product.id]" class="product-card">
+<a [routerLink]="['/product', (product.productName | slug), product.id]" class="product-card">
   <button (click)="onLikeClick($event)" class="like-button">
     <img [src]="getLikeIcon()" alt="Like" class="like-button-img" />
   </button>
