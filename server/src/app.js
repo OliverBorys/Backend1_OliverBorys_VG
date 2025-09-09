@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 
 import { uploadsStatic } from "./config/uploads.js";
+import path from "path";
+import { CLIENT_PUBLIC } from "./config/paths.js";
+
 import { sessionMiddleware } from "./config/session.js";
 
 import { db } from "./db/index.js";
@@ -23,6 +26,7 @@ app.use(express.json());
 app.use(sessionMiddleware());
 
 app.use("/uploads", uploadsStatic);
+app.use(express.static(CLIENT_PUBLIC));
 
 import authRoutes from "./routes/auth.js";
 import categoryRoutes from "./routes/categories.js";

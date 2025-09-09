@@ -4,6 +4,9 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Category } from '../../../models/category.model';
 import { FullProduct } from '../../../models/full-product.model';
 
+type ImageKey = 'image' | 'secondaryImage1' | 'secondaryImage2' | 'secondaryImage3';
+
+
 @Component({
   selector: 'app-product-form',
   standalone: true,
@@ -14,10 +17,17 @@ import { FullProduct } from '../../../models/full-product.model';
 export class ProductFormComponent implements OnInit {
   @Input() product: FullProduct | null = null;
   @Input() categories: Category[] = [];
-  @Output() save = new EventEmitter<FullProduct>();
+  @Output() save = new EventEmitter<FormData>();
   @Output() close = new EventEmitter<void>();
 
   form!: FormGroup;
+
+  files: Record<ImageKey, File | null> = {
+    image: null,
+    secondaryImage1: null,
+    secondaryImage2: null,
+    secondaryImage3: null,
+  };
 
   constructor(private fb: FormBuilder) {}
 
@@ -30,10 +40,6 @@ export class ProductFormComponent implements OnInit {
         [Validators.required, Validators.maxLength(30)],
       ],
       price: [this.product?.price || 0, [Validators.required, Validators.min(0)]],
-      image: [this.product?.image || '', Validators.required],
-      secondaryImage1: [this.product?.secondaryImage1 || ''],
-      secondaryImage2: [this.product?.secondaryImage2 || ''],
-      secondaryImage3: [this.product?.secondaryImage3 || ''],
       brand: [this.product?.brand || '', Validators.required],
       productDescription: [this.product?.productDescription || '', Validators.required],
       isTrending: [isTrendingValue, Validators.required],
@@ -42,22 +48,52 @@ export class ProductFormComponent implements OnInit {
     });
   }
 
+  onFileChange(evt: Event, key: ImageKey) {
+    const input = evt.target as HTMLInputElement;
+    const file = input.files && input.files.length ? input.files[0] : null;
+    this.files[key] = file;
+  }
+
   submit() {
-    if (this.form.valid) {
-      const productData: FullProduct = {
-        ...this.form.value,
-        id: this.product?.id,
-        price: Number(this.form.value.price),
-        categoryId: Number(this.form.value.categoryId),
-        isTrending: this.form.value.isTrending ? 'yes' : 'no',
-      };
-      console.log('Submitting Product:', productData);
-      this.save.emit(productData);
-      this.close.emit();
-    } else {
-      console.log('Form is invalid:', this.form.errors);
+    if (this.form.invalid) {
       this.markAllAsTouched();
+      console.log('Form is invalid:', this.form.errors);
+      return;
     }
+
+    // Om vi skapar NY produkt: kräva primär bild
+    if (!this.product && !this.files.image) {
+      // enkel klientvalidering – du kan även visa fel i UI
+      console.warn('Primary image is required when creating a product');
+      return;
+    }
+
+    // Bygg FormData för multipart/form-data
+    const fd = new FormData();
+
+    // Textfält
+    fd.append('productName', this.form.value.productName);
+    fd.append('price', String(this.form.value.price));
+    fd.append('brand', this.form.value.brand ?? '');
+    fd.append('productDescription', this.form.value.productDescription ?? '');
+    fd.append('isTrending', this.form.value.isTrending ? 'true' : 'false');
+    fd.append('categoryId', String(this.form.value.categoryId));
+    fd.append('publishingDate', this.form.value.publishingDate);
+
+    // Filer (append bara de som valts)
+    if (this.files.image) fd.append('image', this.files.image);
+    if (this.files.secondaryImage1) fd.append('secondaryImage1', this.files.secondaryImage1);
+    if (this.files.secondaryImage2) fd.append('secondaryImage2', this.files.secondaryImage2);
+    if (this.files.secondaryImage3) fd.append('secondaryImage3', this.files.secondaryImage3);
+
+    // Vid uppdatering kan föräldern använda product?.id för att välja PUT-endpoint
+    if (this.product?.id != null) {
+      fd.append('id', String(this.product.id));
+    }
+
+    // Emittera FormData till föräldern (service skickar POST/PUT)
+    this.save.emit(fd);
+    this.close.emit();
   }
 
   private markAllAsTouched() {

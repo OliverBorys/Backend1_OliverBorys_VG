@@ -42,3 +42,6 @@ testem.log
 Thumbs.db
 
 server/db/sessions.db
+
+
+public/images/products/

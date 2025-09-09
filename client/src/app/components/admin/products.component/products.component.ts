@@ -118,23 +118,25 @@ export class ProductsComponent implements OnInit {
     this.selectedProduct = null;
   }
 
-  handleSave(product: FullProduct) {
-    const url = product.id ? `/api/products/${product.id}` : '/api/products';
-    const request = product.id
-      ? this.http.put(url, product)
-      : this.http.post(url, product);
+handleSave(fd: FormData) {
+  const id = fd.get('id') as string | null;
 
-    request.subscribe({
-      next: () => {
-        this.closeModal();
-        this.loadData();
-      },
-      error: (err) => {
-        console.error('Failed to save product:', err);
-        alert('Failed to save product. Please try again.');
-      },
-    });
-  }
+  const url = id ? `/api/products/${id}` : '/api/products';
+  const request = id
+    ? this.http.put(url, fd)
+    : this.http.post(url, fd);
+
+  request.subscribe({
+    next: () => {
+      this.closeModal();
+      this.loadData();
+    },
+    error: (err) => {
+      console.error('Failed to save product:', err);
+      alert('Failed to save product. Please try again.');
+    },
+  });
+}
 
   openDeleteModal(product: FullProduct) {
     this.productToDelete = product;

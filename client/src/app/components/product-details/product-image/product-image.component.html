@@ -1,60 +1,43 @@
 <section>
   <div class="mobile-carousel" [ngClass]="{ hidden: images.length === 0 }">
     <div class="carousel-container">
-      <div
-        class="carousel-track"
-        [style.transform]="'translateX(-' + currentIndex * 100 + '%)'"
-        >
+      <div class="carousel-track" [style.transform]="'translateX(-' + currentIndex * 100 + '%)'">
         @for (img of images; track img; let i = $index) {
-          <div class="carousel-slide">
-            <img [src]="img" alt="Product {{ i + 1 }}" class="carousel-image" />
-          </div>
+        <div class="carousel-slide">
+          <img [src]="img" [alt]="'Product ' + (i + 1)" class="carousel-image" />
+        </div>
         }
       </div>
     </div>
     @if (images.length > 1) {
-      <button
-        class="carousel-button prev"
-        (click)="prevImage()"
-        aria-label="Previous image"
-        >
-        ‹
-      </button>
-    }
-    @if (images.length > 1) {
-      <button
-        class="carousel-button next"
-        (click)="nextImage()"
-        aria-label="Next image"
-        >
-        ›
-      </button>
-    }
-    @if (images.length > 1) {
-      <div class="pagination">
-        @for (img of images; track img; let i = $index) {
-          <span
-            class="pagination-dot"
-            [ngClass]="{ active: i === currentIndex }"
-            (click)="goToImage(i)"
-            [attr.aria-label]="'Go to image ' + (i + 1)"
-          ></span>
-        }
-      </div>
+    <button class="carousel-button prev" (click)="prevImage()" aria-label="Previous image">
+      ‹
+    </button>
+    } @if (images.length > 1) {
+    <button class="carousel-button next" (click)="nextImage()" aria-label="Next image">›</button>
+    } @if (images.length > 1) {
+    <div class="pagination">
+      @for (img of images; track img; let i = $index) {
+      <span
+        class="pagination-dot"
+        [ngClass]="{ active: i === currentIndex }"
+        (click)="goToImage(i)"
+        [attr.aria-label]="'Go to image ' + (i + 1)"
+      ></span>
+      }
+    </div>
     }
   </div>
 
   <div class="desktop-grid" [ngClass]="{ hidden: images.length === 0 }">
     @for (img of images; track img; let i = $index) {
-      <div class="grid-item">
-        <img [src]="img" alt="Product {{ i + 1 }}" class="grid-image" />
-      </div>
+    <div class="grid-item">
+      <img [src]="img" [alt]="'Product ' + (i + 1)" class="grid-image" />
+    </div>
     }
   </div>
 
   @if (!product || images.length === 0) {
-    <p class="no-product">
-      Product not found
-    </p>
+  <p class="no-product">Product not found</p>
   }
 </section>
