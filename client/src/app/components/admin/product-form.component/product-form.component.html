@@ -7,7 +7,7 @@
       <div class="form-section">
         <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
           <div class="form-group">
-            <input formControlName="productName" placeholder="Product Name" maxlength="30" />
+            <input formControlName="productName" placeholder="Product Name" maxlength="25" />
             @if (form.get('productName')?.touched && form.get('productName')?.invalid) {
             <div class="error-message">Product Name is required.</div>
             }
@@ -35,7 +35,8 @@
           </div>
 
           <div class="form-group">
-            <input formControlName="price" type="number" placeholder="Price" />
+            <label for="price">Price:</label>
+            <input formControlName="price" type="number" />
             @if (form.get('price')?.touched && form.get('price')?.invalid) {
             <div class="error-message">
               @if (form.get('price')?.errors?.['required']) {
@@ -48,6 +49,7 @@
           </div>
 
           <div class="form-group">
+            <label>Images:</label>
             <input type="file" accept="image/*" (change)="onFileChange($event, 'image')" />
           </div>
           <div class="form-group">

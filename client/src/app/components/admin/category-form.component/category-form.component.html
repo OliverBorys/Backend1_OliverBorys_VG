@@ -8,12 +8,12 @@
         <div class="form-section">
           <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
             <div class="form-group">
-              <input formControlName="categoryName" placeholder="Category name" />
+              <input formControlName="categoryName" placeholder="Category name" maxlength="30" />
               @if (form.get('categoryName')?.touched && form.get('categoryName')?.invalid) {
                 <div
                   class="error-message"
                   >
-                  Category name is required (max 20).
+                  Category name is required (max 25).
                 </div>
               }
             </div>

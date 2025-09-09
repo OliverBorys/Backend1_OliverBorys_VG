@@ -34,7 +34,7 @@ export class CategoryFormComponent implements OnChanges {
 
   constructor(fb: FormBuilder) {
     this.form = fb.group({
-      categoryName: ['', [Validators.required, Validators.maxLength(40)]],
+      categoryName: ['', [Validators.required, Validators.maxLength(25)]],
     });
   }
 
