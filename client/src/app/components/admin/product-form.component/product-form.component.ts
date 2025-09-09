@@ -61,17 +61,13 @@ export class ProductFormComponent implements OnInit {
       return;
     }
 
-    // Om vi skapar NY produkt: kräva primär bild
     if (!this.product && !this.files.image) {
-      // enkel klientvalidering – du kan även visa fel i UI
       console.warn('Primary image is required when creating a product');
       return;
     }
 
-    // Bygg FormData för multipart/form-data
     const fd = new FormData();
 
-    // Textfält
     fd.append('productName', this.form.value.productName);
     fd.append('price', String(this.form.value.price));
     fd.append('brand', this.form.value.brand ?? '');
@@ -80,18 +76,15 @@ export class ProductFormComponent implements OnInit {
     fd.append('categoryId', String(this.form.value.categoryId));
     fd.append('publishingDate', this.form.value.publishingDate);
 
-    // Filer (append bara de som valts)
     if (this.files.image) fd.append('image', this.files.image);
     if (this.files.secondaryImage1) fd.append('secondaryImage1', this.files.secondaryImage1);
     if (this.files.secondaryImage2) fd.append('secondaryImage2', this.files.secondaryImage2);
     if (this.files.secondaryImage3) fd.append('secondaryImage3', this.files.secondaryImage3);
 
-    // Vid uppdatering kan föräldern använda product?.id för att välja PUT-endpoint
     if (this.product?.id != null) {
       fd.append('id', String(this.product.id));
     }
 
-    // Emittera FormData till föräldern (service skickar POST/PUT)
     this.save.emit(fd);
     this.close.emit();
   }

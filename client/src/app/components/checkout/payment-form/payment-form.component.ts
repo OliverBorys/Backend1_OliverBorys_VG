@@ -119,10 +119,12 @@ export class PaymentFormComponent implements OnInit {
                 error: () => this.finishPurchase(),
               });
           } else {
-            this.http.post('/api/cart/guest/checkout', payload, { withCredentials: true }).subscribe({
-              next: () => this.finishPurchase(),
-              error: () => this.finishPurchase(),
-            });
+            this.http
+              .post('/api/cart/guest/checkout', payload, { withCredentials: true })
+              .subscribe({
+                next: () => this.finishPurchase(),
+                error: () => this.finishPurchase(),
+              });
           }
         };
 
