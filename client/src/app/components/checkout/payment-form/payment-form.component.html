@@ -65,11 +65,12 @@
     </div>
     @if (form.get('paymentMethod')?.touched && form.get('paymentMethod')?.invalid) {
     <small class="error"> Please choose a payment method. </small>
-    }
+    } @if (isLoggedIn) {
     <label style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.75rem">
       <input type="checkbox" formControlName="saveToProfile" />
       <span>Spara uppgifterna på min profil</span>
     </label>
+    }
   </form>
   <div class="purchase-container">
     <button

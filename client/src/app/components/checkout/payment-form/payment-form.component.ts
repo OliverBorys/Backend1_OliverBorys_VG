@@ -18,6 +18,7 @@ export class PaymentFormComponent implements OnInit {
   form!: FormGroup;
   showModal = false;
   isSubmitting = false;
+  isLoggedIn = false;
 
   paymentMethods = ['Card', 'Swish', 'Klarna', 'PayPal'];
   paymentIcons: Record<string, string> = {
@@ -50,9 +51,10 @@ export class PaymentFormComponent implements OnInit {
   private prefillForLoggedInUser(): void {
     this.http.get<{ user: any }>('/api/auth/me', { withCredentials: true }).subscribe({
       next: (res) => {
-        if (res?.user) this.loadProfile();
+        this.isLoggedIn = !!res?.user;
+        if (this.isLoggedIn) this.loadProfile();
       },
-      error: () => void 0,
+      error: () => {this.isLoggedIn = false; },
     });
   }
 
